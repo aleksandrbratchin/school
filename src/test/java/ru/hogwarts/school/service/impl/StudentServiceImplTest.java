@@ -36,7 +36,7 @@ class StudentServiceImplTest {
             @BeforeEach
             public void initEach() throws IllegalAccessException {
                 service = new StudentServiceImpl();
-                fieldId.set(null, 0);
+                fieldId.set(service, 0);
             }
 
             @Test
@@ -71,7 +71,7 @@ class StudentServiceImplTest {
                 );
 
                 fieldMap.set(service, testFaculties);
-                fieldId.set(null, 3);
+                fieldId.set(service, 3);
             }
 
             @Test
@@ -171,7 +171,7 @@ class StudentServiceImplTest {
             @BeforeEach
             public void initEach() throws IllegalAccessException {
                 service = new StudentServiceImpl();
-                fieldId.set(null, 0);
+                fieldId.set(service, 0);
             }
 
             @Test
@@ -224,7 +224,7 @@ class StudentServiceImplTest {
                 );
 
                 fieldMap.set(service, testFaculties);
-                fieldId.set(null, 3);
+                fieldId.set(service, 3);
             }
 
             @Test

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class StudentServiceImpl implements StudentService {
 
     private final Map<Long, Student> studentMap = new HashMap<>();
-    private static long id = 0;
+    private long id = 0;
     private final String NULL_ERROR_MESSAGE = "Студент не может быть null!";
 
     @Override
@@ -98,4 +98,5 @@ public class StudentServiceImpl implements StudentService {
                         NotFoundElementException::new
                 );
     }
+
 }
