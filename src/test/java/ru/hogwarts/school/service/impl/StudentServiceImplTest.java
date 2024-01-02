@@ -6,7 +6,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import ru.hogwarts.school.exception.MyIllegalArgumentException;
 import ru.hogwarts.school.exception.NotFoundElementException;
+import ru.hogwarts.school.model.faculty.Faculty;
 import ru.hogwarts.school.model.student.Student;
+import ru.hogwarts.school.specification.FacultyContainsColorSpecification;
+import ru.hogwarts.school.specification.StudentEqualsAgeSpecification;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -36,7 +39,7 @@ class StudentServiceImplTest {
             @BeforeEach
             public void initEach() throws IllegalAccessException {
                 service = new StudentServiceImpl();
-                fieldId.set(null, 0);
+                fieldId.set(service, 0);
             }
 
             @Test
@@ -53,6 +56,21 @@ class StudentServiceImplTest {
                 ).contains(potter.getName());
             }
 
+            @Test
+            void findAll() {
+
+                Map<Long, Student> results = service.findAll();
+
+                assertThat(results.size()).isEqualTo(0);
+            }
+            @Test
+            void findAllSpecification() {
+
+                Map<Long, Student> results = service.findAll(new StudentEqualsAgeSpecification(11));
+
+                assertThat(results.size()).isEqualTo(0);
+            }
+
 
         }
 
@@ -63,7 +81,7 @@ class StudentServiceImplTest {
                 service = new StudentServiceImpl();
                 Student granger = new Student(0L, "Гермиона Джин Грейнджер", 11);
                 Student malfoy = new Student(1L, "Драко Люциус Малфой", 11);
-                Student lovegood = new Student(2L, "Полумна Лавгуд", 11);
+                Student lovegood = new Student(2L, "Полумна Лавгуд", 12);
                 Map<Long, Student> testFaculties = new HashMap<>(
                         Map.of(0L, granger,
                                 1L, malfoy,
@@ -71,7 +89,7 @@ class StudentServiceImplTest {
                 );
 
                 fieldMap.set(service, testFaculties);
-                fieldId.set(null, 3);
+                fieldId.set(service, 3);
             }
 
             @Test
@@ -123,6 +141,25 @@ class StudentServiceImplTest {
 
                 assertThat(facultyMap.size()).isEqualTo(3);
             }
+
+            @Test
+            void findAllSpecification() {
+
+                Map<Long, Student> results = service.findAll(new StudentEqualsAgeSpecification(11));
+
+                assertThat(results.size()).isEqualTo(2);
+                assertThat(
+                        results.values().stream().map(Student::getName).toList()
+                ).doesNotContain("Полумна Лавгуд");
+            }
+
+            @Test
+            void findOne() {
+
+                Student result = service.findOne(new StudentEqualsAgeSpecification(12));
+
+                assertThat(result.getName()).isEqualTo("Полумна Лавгуд");
+            }
         }
     }
 
@@ -163,6 +200,14 @@ class StudentServiceImplTest {
 
                 assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
             }
+
+            @Test
+            void findAll() {
+
+                Throwable thrown = catchThrowable(() -> service.findAll(null));
+
+                assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
+            }
         }
 
 
@@ -171,7 +216,7 @@ class StudentServiceImplTest {
             @BeforeEach
             public void initEach() throws IllegalAccessException {
                 service = new StudentServiceImpl();
-                fieldId.set(null, 0);
+                fieldId.set(service, 0);
             }
 
             @Test
@@ -224,7 +269,7 @@ class StudentServiceImplTest {
                 );
 
                 fieldMap.set(service, testFaculties);
-                fieldId.set(null, 3);
+                fieldId.set(service, 3);
             }
 
             @Test
@@ -270,6 +315,15 @@ class StudentServiceImplTest {
                         id.toString()
                 );
             }
+
+            @Test
+            void findOne() {
+
+                Throwable thrown = catchThrowable(() -> service.findOne(new StudentEqualsAgeSpecification(12)));
+
+                assertThat(thrown).isInstanceOf(NotFoundElementException.class);
+            }
+
         }
     }
 

@@ -6,9 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.faculty.Faculty;
 import ru.hogwarts.school.service.impl.FacultyServiceImpl;
+import ru.hogwarts.school.specification.FacultyContainsColorSpecification;
 
 @RestController
-@RequestMapping("/faculty")
+@RequestMapping("faculty")
 public class FacultyController {
 
     private final FacultyServiceImpl service;
@@ -17,7 +18,7 @@ public class FacultyController {
         this.service = service;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<?> delete(
             @PathVariable("id") Long id
     ) {
@@ -38,8 +39,13 @@ public class FacultyController {
         return new ResponseEntity<>(service.update(faculty), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/All")
+    @GetMapping(path = "All")
     public ResponseEntity<?> getAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "filterByColor")
+    public ResponseEntity<?> filterByColor(@RequestParam String color) {
+        return new ResponseEntity<>(service.findAll(new FacultyContainsColorSpecification(color)), HttpStatus.OK);
     }
 }

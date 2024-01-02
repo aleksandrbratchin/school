@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import ru.hogwarts.school.exception.MyIllegalArgumentException;
 import ru.hogwarts.school.exception.NotFoundElementException;
 import ru.hogwarts.school.model.faculty.Faculty;
+import ru.hogwarts.school.specification.FacultyContainsColorSpecification;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ class FacultyServiceImplTest {
             @BeforeEach
             public void initEach() throws IllegalAccessException {
                 service = new FacultyServiceImpl();
-                fieldId.set(null, 0);
+                fieldId.set(service, 0);
             }
 
             @Test
@@ -55,6 +56,20 @@ class FacultyServiceImplTest {
                 ).contains(slytherin.getName());
             }
 
+            @Test
+            void findAll() {
+
+                Map<Long, Faculty> results = service.findAll();
+
+                assertThat(results.size()).isEqualTo(0);
+            }
+            @Test
+            void findAllSpecification() {
+
+                Map<Long, Faculty> results = service.findAll(new FacultyContainsColorSpecification("синий"));
+
+                assertThat(results.size()).isEqualTo(0);
+            }
 
         }
 
@@ -73,7 +88,7 @@ class FacultyServiceImplTest {
                 );
 
                 fieldMap.set(service, testFaculties);
-                fieldId.set(null, 3);
+                fieldId.set(service, 3);
             }
 
             @Test
@@ -125,6 +140,23 @@ class FacultyServiceImplTest {
 
                 assertThat(facultyMap.size()).isEqualTo(3);
             }
+
+            @Test
+            void findAllSpecification() {
+
+                Map<Long, Faculty> results = service.findAll(new FacultyContainsColorSpecification("синий"));
+
+                assertThat(results.size()).isEqualTo(1);
+                assertThat(results.values().stream().map(Faculty::getName)).contains("Когтевран");
+            }
+
+            @Test
+            void findOne() {
+
+                Faculty result = service.findOne(new FacultyContainsColorSpecification("синий"));
+
+                assertThat(result.getName()).isEqualTo("Когтевран");
+            }
         }
 
     }
@@ -168,6 +200,14 @@ class FacultyServiceImplTest {
 
                 assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
             }
+
+            @Test
+            void findAll() {
+
+                Throwable thrown = catchThrowable(() -> service.findAll(null));
+
+                assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
+            }
         }
 
 
@@ -176,7 +216,7 @@ class FacultyServiceImplTest {
             @BeforeEach
             public void initEach() throws IllegalAccessException {
                 service = new FacultyServiceImpl();
-                fieldId.set(null, 0);
+                fieldId.set(service, 0);
             }
 
             @Test
@@ -212,6 +252,7 @@ class FacultyServiceImplTest {
                 );
             }
 
+
         }
 
         @Nested
@@ -229,7 +270,7 @@ class FacultyServiceImplTest {
                 );
 
                 fieldMap.set(service, testFaculties);
-                fieldId.set(null, 3);
+                fieldId.set(service, 3);
             }
 
             @Test
@@ -276,21 +317,17 @@ class FacultyServiceImplTest {
                 );
             }
 
+            @Test
+            void findOne() {
+
+                Throwable thrown = catchThrowable(() -> service.findOne(new FacultyContainsColorSpecification("зелёный")));
+
+                assertThat(thrown).isInstanceOf(NotFoundElementException.class);
+            }
+
+
         }
 
-    }
-
-
-    @Test
-    void findAll() {
-    }
-
-    @Test
-    void testFindAll() {
-    }
-
-    @Test
-    void findOne() {
     }
 
 }

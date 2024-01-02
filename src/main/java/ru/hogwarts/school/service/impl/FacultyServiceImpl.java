@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class FacultyServiceImpl implements FacultyService {
     private final Map<Long, Faculty> facultyMap = new HashMap<>();
-    private static long id = 0;
+    private long id = 0;
     private final String NULL_ERROR_MESSAGE = "Факультет не должен быть null!";
 
     @Override
