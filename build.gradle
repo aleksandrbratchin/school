@@ -8,11 +8,7 @@ group = 'ru.hogwarts'
 version = '0.0.1-SNAPSHOT'
 
 java {
-<<<<<<< HEAD
 	sourceCompatibility = '21'
-=======
-	sourceCompatibility = '19'
->>>>>>> origin/hw3.2
 }
        
 repositories {
