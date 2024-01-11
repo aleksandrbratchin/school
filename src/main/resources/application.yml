@@ -3,3 +3,12 @@ server:
 springdoc:
   swagger-ui:
     path: swagger
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hogwarts
+    username: student
+    password: chocolatefrog
