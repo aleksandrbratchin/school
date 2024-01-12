@@ -1,177 +1,192 @@
 package ru.hogwarts.school.services.impl;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import ru.hogwarts.school.exception.MyIllegalArgumentException;
-import ru.hogwarts.school.exception.NotFoundElementException;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.hogwarts.school.model.student.Student;
+import ru.hogwarts.school.repositories.StudentRepository;
+import ru.hogwarts.school.specifications.StudentSpecification;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.ArgumentMatchers.any;
 
+@ExtendWith(SpringExtension.class)
 class StudentServiceImplTest {
- /*   private StudentServiceImpl service;
-    private static Field fieldMap;
-    private static Field fieldId;
+    private StudentServiceImpl service;
 
-    @BeforeAll
-    public static void setup() throws NoSuchFieldException {
-        fieldMap = StudentServiceImpl.class.getDeclaredField("studentMap");
-        fieldMap.setAccessible(true);
-        fieldId = StudentServiceImpl.class.getDeclaredField("id");
-        fieldId.setAccessible(true);
+    @Mock
+    private StudentRepository repository;
+
+    @BeforeEach
+    void setUp() {
+        service = new StudentServiceImpl(repository);
     }
 
     @Nested
     class Success {
+        @Test
+        void create() {
+            Student potter = new Student("Гарри Джеймс Поттер", 11);
+            Mockito.when(repository.exists(any(Specification.class)))
+                    .thenReturn(false);
+            Student newStudent = new Student(UUID.randomUUID(), potter.getName(), potter.getAge());
+            Mockito.when(repository.save(any(Student.class)))
+                    .thenReturn(newStudent);
+
+            Student created = service.create(potter);
+
+            assertThat(created.getName()).isEqualTo(potter.getName());
+            assertThat(created.getId()).isNotNull();
+        }
 
         @Nested
-        class MapIsEmpty {
-            @BeforeEach
-            public void initEach() throws IllegalAccessException {
-                service = new StudentServiceImpl();
-                fieldId.set(service, 0);
-            }
-
-            @Test
-            void create() throws IllegalAccessException {
-                Student potter = new Student("Гарри Джеймс Поттер", 11);
-
-                Student created = service.create(potter);
-                var students = (Map<Long, Student>) fieldMap.get(service);
-
-                assertThat(created.getName()).isEqualTo(potter.getName());
-                assertThat(students.size()).isEqualTo(1);
-                assertThat(
-                        students.values().stream().map(Student::getName).toList()
-                ).contains(potter.getName());
-            }
+        class RepositoryIsEmpty {
 
             @Test
             void findAll() {
+                Mockito.when(repository.findAll())
+                        .thenReturn(new ArrayList<>());
 
-                Map<Long, Student> results = service.findAll();
+                List<Student> results = service.findAll();
 
                 assertThat(results.size()).isEqualTo(0);
             }
+
             @Test
             void findAllSpecification() {
+                Mockito.when(repository.findAll(any(Specification.class)))
+                        .thenReturn(new ArrayList<>());
 
-                Map<Long, Student> results = service.findAll(new StudentEqualsAgeSpecification(11));
+                List<Student> results = service.findAll(StudentSpecification.ageEqual(11));
 
                 assertThat(results.size()).isEqualTo(0);
             }
-
 
         }
 
         @Nested
-        class MapIsNotEmpty {
+        class RepositoryIsNotEmpty {
+            private List<Student> students = new ArrayList<>();
+            private Student malfoy = null;
+
             @BeforeEach
-            public void initEach() throws IllegalAccessException {
-                service = new StudentServiceImpl();
-                Student granger = new Student(0L, "Гермиона Джин Грейнджер", 11);
-                Student malfoy = new Student(1L, "Драко Люциус Малфой", 11);
-                Student lovegood = new Student(2L, "Полумна Лавгуд", 12);
-                Map<Long, Student> testFaculties = new HashMap<>(
-                        Map.of(0L, granger,
-                                1L, malfoy,
-                                2L, lovegood)
-                );
-
-                fieldMap.set(service, testFaculties);
-                fieldId.set(service, 3);
+            public void initEach() {
+                Student granger = new Student(UUID.randomUUID(), "Гермиона Джин Грейнджер", 11);
+                malfoy = new Student(UUID.randomUUID(), "Драко Люциус Малфой", 12);
+                Student lovegood = new Student(UUID.randomUUID(), "Полумна Лавгуд", 11);
+                students = Arrays.asList(granger, malfoy, lovegood);
             }
 
             @Test
-            void create() throws IllegalAccessException {
-                Student potter = new Student("Гарри Джеймс Поттер", 11);
+            void delete() {
+                Mockito.when(repository.findOne(any(Specification.class)))
+                        .thenReturn(Optional.of(malfoy));
 
-                Student created = service.create(potter);
-                var students = (Map<Long, Student>) fieldMap.get(service);
+                Student deleted = service.delete(malfoy.getId());
 
-                assertThat(created.getName()).isEqualTo(potter.getName());
-                assertThat(students.size()).isEqualTo(4);
-                assertThat(
-                        students.values().stream().map(Student::getName).toList()
-                ).contains(potter.getName());
+                assertThat(deleted.getName()).isEqualTo("Драко Люциус Малфой");
             }
 
             @Test
-            void update() throws IllegalAccessException {
-                Student potter = new Student(0L, "Гарри Джеймс Поттер", 11);
+            void update() {
+                Student slytherin = new Student(malfoy.getId(), "Гарри Джеймс Поттер", 11);
+                Mockito.when(repository.existsById(any(UUID.class)))
+                        .thenReturn(true);
+                Mockito.when(repository.exists(any(Specification.class)))
+                        .thenReturn(false);
+                Mockito.when(repository.save(any(Student.class)))
+                        .thenReturn(slytherin);
 
-                Student oldValue = service.update(potter);
-                var students = (Map<Long, Student>) fieldMap.get(service);
+                Student updated = service.update(slytherin);
 
-                assertThat(oldValue.getName()).contains("Грейнджер");
-                assertThat(students.size()).isEqualTo(3);
-                assertThat(
-                        students.values().stream().map(Student::getName).toList()
-                ).contains(potter.getName());
-            }
-
-            @Test
-            void delete() throws IllegalAccessException {
-                Long id = 1L;
-
-                Student deleted = service.delete(id);
-                var students = (Map<Long, Student>) fieldMap.get(service);
-
-                assertThat(deleted.getName()).contains("Малфой");
-                assertThat(students.size()).isEqualTo(2);
-                assertThat(
-                        students.values().stream().map(Student::getName).toList()
-                ).doesNotContain("Драко Люциус Малфой");
+                assertThat(updated.getName()).isEqualTo(slytherin.getName());
             }
 
             @Test
             void findAll() {
+                Mockito.when(repository.findAll())
+                        .thenReturn(students);
 
-                Map<Long, Student> facultyMap = service.findAll();
+                List<Student> results = service.findAll();
 
-                assertThat(facultyMap.size()).isEqualTo(3);
+                assertThat(results.size()).isEqualTo(3);
             }
 
             @Test
             void findAllSpecification() {
+                Mockito.when(repository.findAll(any(Specification.class)))
+                        .thenReturn(students);
 
-                Map<Long, Student> results = service.findAll(new StudentEqualsAgeSpecification(11));
+                List<Student> results = service.findAll(StudentSpecification.ageEqual(12));
 
-                assertThat(results.size()).isEqualTo(2);
-                assertThat(
-                        results.values().stream().map(Student::getName).toList()
-                ).doesNotContain("Полумна Лавгуд");
+                assertThat(results.size()).isEqualTo(3);
             }
 
             @Test
             void findOne() {
+                Mockito.when(repository.findOne(any(Specification.class)))
+                        .thenReturn(Optional.of(malfoy));
 
-                Student result = service.findOne(new StudentEqualsAgeSpecification(12));
+                Student result = service.findOne(StudentSpecification.ageEqual(12));
 
-                assertThat(result.getName()).isEqualTo("Полумна Лавгуд");
+                assertThat(result.getName()).isEqualTo("Драко Люциус Малфой");
             }
         }
+
     }
 
     @Nested
     class Error {
 
+        @Test
+        void delete() {
+            Mockito.when(repository.findOne(any(Specification.class)))
+                    .thenReturn(Optional.empty());
+
+            Throwable thrown = catchThrowable(() -> service.delete(UUID.randomUUID()));
+
+            assertThat(thrown).isInstanceOf(NoSuchElementException.class);
+        }
+
+        @Test
+        void update() {
+            Mockito.when(repository.existsById(any(UUID.class)))
+                    .thenReturn(false);
+            Student potter = new Student(UUID.randomUUID(), "Гарри Джеймс Поттер", 11);
+
+            Throwable thrown = catchThrowable(() -> service.update(potter));
+
+            assertThat(thrown).isInstanceOf(NoSuchElementException.class).hasMessageContaining(
+                    potter.getId().toString()
+            );
+        }
+
+        @Test
+        void findOne() {
+            Mockito.when(repository.findOne(any(Specification.class)))
+                    .thenReturn(Optional.empty());
+
+            Throwable thrown = catchThrowable(() -> service.findOne(StudentSpecification.nameEqual("Гарри Джеймс Поттер")));
+
+            assertThat(thrown).isInstanceOf(NoSuchElementException.class);
+        }
+
         @Nested
         class ParametersIsNull {
-
             @Test
             void create() {
 
                 Throwable thrown = catchThrowable(() -> service.create(null));
 
-                assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
+                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
             }
 
             @Test
@@ -179,7 +194,7 @@ class StudentServiceImplTest {
 
                 Throwable thrown = catchThrowable(() -> service.update(null));
 
-                assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
+                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
             }
 
             @Test
@@ -187,7 +202,7 @@ class StudentServiceImplTest {
 
                 Throwable thrown = catchThrowable(() -> service.delete(null));
 
-                assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
+                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
             }
 
             @Test
@@ -195,7 +210,7 @@ class StudentServiceImplTest {
 
                 Throwable thrown = catchThrowable(() -> service.findOne(null));
 
-                assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
+                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
             }
 
             @Test
@@ -203,125 +218,9 @@ class StudentServiceImplTest {
 
                 Throwable thrown = catchThrowable(() -> service.findAll(null));
 
-                assertThat(thrown).isInstanceOf(NullPointerException.class).hasMessageContaining("null");
+                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
             }
         }
-
-
-        @Nested
-        class MapIsEmpty {
-            @BeforeEach
-            public void initEach() throws IllegalAccessException {
-                service = new StudentServiceImpl();
-                fieldId.set(service, 0);
-            }
-
-            @Test
-            void update() {
-                Student malfoy = new Student(2L, "Драко Люциус Малфой", 11);
-
-                Throwable thrown = catchThrowable(() -> service.update(malfoy));
-
-                assertThat(thrown).isInstanceOf(NotFoundElementException.class).hasMessageContaining(
-                        malfoy.getId().toString()
-                );
-            }
-
-            @Test
-            void updateIdIsNull() {
-                Student malfoy = new Student("Драко Люциус Малфой", 11);
-
-                Throwable thrown = catchThrowable(() -> service.update(malfoy));
-
-                assertThat(thrown).isInstanceOf(NotFoundElementException.class).hasMessageContaining(
-                        "null"
-                );
-            }
-
-            @Test
-            void delete() {
-                Long id = 0L;
-
-                Throwable thrown = catchThrowable(() -> service.delete(id));
-
-                assertThat(thrown).isInstanceOf(NotFoundElementException.class).hasMessageContaining(
-                        id.toString()
-                );
-            }
-
-        }
-
-        @Nested
-        class MapIsNotEmpty {
-            @BeforeEach
-            public void initEach() throws IllegalAccessException {
-                service = new StudentServiceImpl();
-                Student granger = new Student(0L, "Гермиона Джин Грейнджер", 11);
-                Student malfoy = new Student(1L, "Драко Люциус Малфой", 11);
-                Student lovegood = new Student(2L, "Полумна Лавгуд", 11);
-                Map<Long, Student> testFaculties = new HashMap<>(
-                        Map.of(0L, granger,
-                                1L, malfoy,
-                                2L, lovegood)
-                );
-
-                fieldMap.set(service, testFaculties);
-                fieldId.set(service, 3);
-            }
-
-            @Test
-            void create() {
-                Student lovegood = new Student("Полумна Лавгуд", 11);
-
-                Throwable thrown = catchThrowable(() -> service.create(lovegood));
-
-                assertThat(thrown).isInstanceOf(MyIllegalArgumentException.class).hasMessageContaining(
-                        lovegood.getName()
-                );
-            }
-
-            @Test
-            void updateStudentIsPresent() {
-                Student granger = new Student(1L, "Гермиона Джин Грейнджер", 11);
-
-                Throwable thrown = catchThrowable(() -> service.update(granger));
-
-                assertThat(thrown).isInstanceOf(MyIllegalArgumentException.class).hasMessageContaining(
-                        granger.getName()
-                );
-            }
-
-            @Test
-            void updateIdIsNotPresent() {
-                Student malfoy = new Student(10L, "Гарри Джеймс Поттер", 11);
-
-                Throwable thrown = catchThrowable(() -> service.update(malfoy));
-
-                assertThat(thrown).isInstanceOf(NotFoundElementException.class).hasMessageContaining(
-                        malfoy.getId().toString()
-                );
-            }
-
-            @Test
-            void delete() {
-                Long id = 10L;
-
-                Throwable thrown = catchThrowable(() -> service.delete(id));
-
-                assertThat(thrown).isInstanceOf(NotFoundElementException.class).hasMessageContaining(
-                        id.toString()
-                );
-            }
-
-            @Test
-            void findOne() {
-
-                Throwable thrown = catchThrowable(() -> service.findOne(new StudentEqualsAgeSpecification(12)));
-
-                assertThat(thrown).isInstanceOf(NotFoundElementException.class);
-            }
-
-        }
-    }*/
+    }
 
 }

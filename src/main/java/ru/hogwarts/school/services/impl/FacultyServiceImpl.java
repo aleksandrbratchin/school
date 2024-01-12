@@ -17,8 +17,8 @@ public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyRepository repository;
 
-    public FacultyServiceImpl(FacultyRepository repository) {
-        this.repository = repository;
+    public FacultyServiceImpl(FacultyRepository facultyRepository) {
+        this.repository = facultyRepository;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class FacultyServiceImpl implements FacultyService {
                             "Факультет с id = '" + id + "' не найден."
             );
         }
-        if(repository.exists(FacultySpecification.nameEqual(faculty.getName()))){
+        if (repository.exists(FacultySpecification.nameEqual(faculty.getName()))) {
             throw new IllegalArgumentException(
                     "Ошибка при попытке изменения факультета! " +
                             "Факультет с именем = '" + faculty.getName() + "' уже добавлен."
@@ -55,12 +55,12 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public Faculty delete(UUID id) {
         Optional.ofNullable(id).orElseThrow(IllegalArgumentException::new);
-        Faculty old = repository.findOne(
-                FacultySpecification.idEqual(id)).orElseThrow(() -> new NoSuchElementException(
-                        "Ошибка при попытке удаления факультета! " +
-                                "Факультет с id = '" + id + "' не найден."
-                )
-        );
+        Faculty old = repository.findOne(FacultySpecification.idEqual(id))
+                .orElseThrow(() -> new NoSuchElementException(
+                                "Ошибка при попытке удаления факультета! " +
+                                        "Факультет с id = '" + id + "' не найден."
+                        )
+                );
         repository.deleteById(id);
         return old;
     }

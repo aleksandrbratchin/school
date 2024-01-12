@@ -12,6 +12,11 @@ public class StudentSpecification {
                 criteriaBuilder.equal(root.get("age"), age);
     }
 
+    public static Specification<Student> nameEqual(String name) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("name"), name);
+    }
+
     public static Specification<Student> idEqual(UUID id) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("id"), id);

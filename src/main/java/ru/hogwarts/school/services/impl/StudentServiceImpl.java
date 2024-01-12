@@ -3,9 +3,9 @@ package ru.hogwarts.school.services.impl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.student.Student;
-import ru.hogwarts.school.specifications.StudentSpecification;
 import ru.hogwarts.school.repositories.StudentRepository;
 import ru.hogwarts.school.services.api.StudentService;
+import ru.hogwarts.school.specifications.StudentSpecification;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,8 +17,8 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository repository;
 
-    public StudentServiceImpl(StudentRepository repository) {
-        this.repository = repository;
+    public StudentServiceImpl(StudentRepository studentRepository) {
+        this.repository = studentRepository;
     }
 
     @Override
@@ -44,12 +44,12 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student delete(UUID id) {
         Optional.ofNullable(id).orElseThrow(IllegalArgumentException::new);
-        Student old = repository.findOne(
-                StudentSpecification.idEqual(id)).orElseThrow(() -> new NoSuchElementException(
-                        "Ошибка при попытке удаления студента! " +
-                                "Студент с id = '" + id + "' не найден."
-                )
-        );
+        Student old = repository.findOne(StudentSpecification.idEqual(id))
+                .orElseThrow(() -> new NoSuchElementException(
+                                "Ошибка при попытке удаления студента! " +
+                                        "Студент с id = '" + id + "' не найден."
+                        )
+                );
         repository.deleteById(id);
         return old;
     }
