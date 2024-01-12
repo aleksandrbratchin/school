@@ -32,7 +32,6 @@ class FacultyServiceImplTest {
         service = new FacultyServiceImpl(repository);
     }
 
-
     @Nested
     class Success {
 
