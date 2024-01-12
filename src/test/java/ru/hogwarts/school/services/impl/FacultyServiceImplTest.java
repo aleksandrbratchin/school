@@ -102,8 +102,8 @@ class FacultyServiceImplTest {
             @Test
             void update() {
                 Faculty slytherin = new Faculty(ravenclaw.getId(), "Слизерин", "зелёный, серебряный");
-                Mockito.when(repository.existsById(any(UUID.class)))
-                        .thenReturn(true);
+                Mockito.when(repository.findById(any(UUID.class)))
+                        .thenReturn(Optional.of(ravenclaw));
                 Mockito.when(repository.exists(any(Specification.class)))
                         .thenReturn(false);
                 Mockito.when(repository.save(any(Faculty.class)))

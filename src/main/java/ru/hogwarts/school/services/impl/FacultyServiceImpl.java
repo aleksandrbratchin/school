@@ -36,13 +36,14 @@ public class FacultyServiceImpl implements FacultyService {
     public Faculty update(Faculty faculty) {
         Optional.ofNullable(faculty).orElseThrow(IllegalArgumentException::new);
         UUID id = faculty.getId();
-        if (!repository.existsById(id)) {
-            throw new NoSuchElementException(
-                    "Ошибка при попытке изменения факультета! " +
-                            "Факультет с id = '" + id + "' не найден."
-            );
-        }
-        if (repository.exists(FacultySpecification.nameEqual(faculty.getName()))) {
+        Faculty old = repository.findById(faculty.getId())
+                .orElseThrow(
+                        () -> new NoSuchElementException(
+                                "Ошибка при попытке изменения факультета! " +
+                                        "Факультет с id = '" + id + "' не найден.")
+                );
+        if (!old.getName().equals(faculty.getName()) &&
+                repository.exists(FacultySpecification.nameEqual(faculty.getName()))) {
             throw new IllegalArgumentException(
                     "Ошибка при попытке изменения факультета! " +
                             "Факультет с именем = '" + faculty.getName() + "' уже добавлен."
