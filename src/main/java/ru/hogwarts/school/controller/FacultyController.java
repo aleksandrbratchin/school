@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.faculty.Faculty;
-import ru.hogwarts.school.service.impl.FacultyServiceImpl;
-import ru.hogwarts.school.specification.FacultyContainsColorSpecification;
+import ru.hogwarts.school.specifications.FacultySpecification;
+import ru.hogwarts.school.services.impl.FacultyServiceImpl;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("faculty")
@@ -20,32 +22,52 @@ public class FacultyController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> delete(
-            @PathVariable("id") Long id
+            @PathVariable("id") UUID id
     ) {
-        return new ResponseEntity<>(service.delete(id), HttpStatus.OK);
+        try {
+            return ResponseEntity.ok(service.delete(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping()
     public ResponseEntity<?> add(
             @RequestBody Faculty faculty
     ) {
-        return new ResponseEntity<>(service.create(faculty), HttpStatus.OK);
+        try {
+            return ResponseEntity.ok(service.create(faculty));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping()
     public ResponseEntity<?> update(
             @RequestBody Faculty faculty
     ) {
-        return new ResponseEntity<>(service.update(faculty), HttpStatus.OK);
+        try {
+            return ResponseEntity.ok(service.update(faculty));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping(path = "All")
     public ResponseEntity<?> getAll() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+        try {
+            return ResponseEntity.ok(service.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping(path = "filterByColor")
     public ResponseEntity<?> filterByColor(@RequestParam String color) {
-        return new ResponseEntity<>(service.findAll(new FacultyContainsColorSpecification(color)), HttpStatus.OK);
+        try {
+            return ResponseEntity.ok(service.findAll(FacultySpecification.colorLike(color)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

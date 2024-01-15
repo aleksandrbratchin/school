@@ -1,14 +1,25 @@
 package ru.hogwarts.school.model.faculty;
 
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+import java.util.UUID;
+
+@Entity
 public class Faculty {
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String name;
     private String color;
 
     public Faculty() {
     }
 
-    public Faculty(Long id, String name, String color) {
+    public Faculty(UUID id, String name, String color) {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -19,11 +30,11 @@ public class Faculty {
         this.color = color;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
