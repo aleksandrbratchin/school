@@ -72,5 +72,4 @@ public class StudentServiceImpl implements StudentService {
         return repository.findOne(specification).orElseThrow(NoSuchElementException::new);
     }
 
-
 }

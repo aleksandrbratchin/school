@@ -37,10 +37,10 @@ class FacultyServiceImplTest {
 
         @Test
         void create() {
-            Faculty slytherin = new Faculty("Слизерин", "зелёный, серебряный");
+            Faculty slytherin = new Faculty("Слизерин", "зелёный, серебряный", new ArrayList<>());
             Mockito.when(repository.exists(any(Specification.class)))
                     .thenReturn(false);
-            Faculty newSlytherin = new Faculty(UUID.randomUUID(), "Слизерин", "зелёный, серебряный");
+            Faculty newSlytherin = new Faculty(UUID.randomUUID(), "Слизерин", "зелёный, серебряный", new ArrayList<>());
             Mockito.when(repository.save(any(Faculty.class)))
                     .thenReturn(newSlytherin);
 
@@ -82,9 +82,9 @@ class FacultyServiceImplTest {
 
             @BeforeEach
             public void initEach() throws IllegalAccessException {
-                Faculty gryffindor = new Faculty(UUID.randomUUID(), "Гриффиндор", "алый, золотой");
-                ravenclaw = new Faculty(UUID.randomUUID(), "Когтевран", "синий, бронзовый");
-                Faculty hufflepuff = new Faculty(UUID.randomUUID(), "Пуффендуй", "канареечно-жёлтый, чёрный");
+                Faculty gryffindor = new Faculty(UUID.randomUUID(), "Гриффиндор", "алый, золотой", new ArrayList<>());
+                ravenclaw = new Faculty(UUID.randomUUID(), "Когтевран", "синий, бронзовый", new ArrayList<>());
+                Faculty hufflepuff = new Faculty(UUID.randomUUID(), "Пуффендуй", "канареечно-жёлтый, чёрный", new ArrayList<>());
                 faculties = Arrays.asList(gryffindor, ravenclaw, hufflepuff);
             }
 
@@ -100,7 +100,7 @@ class FacultyServiceImplTest {
 
             @Test
             void update() {
-                Faculty slytherin = new Faculty(ravenclaw.getId(), "Слизерин", "зелёный, серебряный");
+                Faculty slytherin = new Faculty(ravenclaw.getId(), "Слизерин", "зелёный, серебряный", new ArrayList<>());
                 Mockito.when(repository.findById(any(UUID.class)))
                         .thenReturn(Optional.of(ravenclaw));
                 Mockito.when(repository.exists(any(Specification.class)))
@@ -151,7 +151,7 @@ class FacultyServiceImplTest {
 
         @Test
         void create() {
-            Faculty slytherin = new Faculty("Слизерин", "зелёный, серебряный");
+            Faculty slytherin = new Faculty("Слизерин", "зелёный, серебряный", new ArrayList<>());
             Mockito.when(repository.exists(any(Specification.class)))
                     .thenReturn(true);
 
@@ -174,11 +174,13 @@ class FacultyServiceImplTest {
 
         @Test
         void updateNameIsPresent() {
-            Mockito.when(repository.existsById(any(UUID.class)))
-                    .thenReturn(true);
+            UUID id = UUID.randomUUID();
+            Faculty slytherin = new Faculty(id,"Слизерин", "зелёный, серебряный", new ArrayList<>());
+            Faculty hufflepuff = new Faculty(id, "Пуффендуй", "зелёный, серебряный", new ArrayList<>());
+            Mockito.when(repository.findById(any(UUID.class)))
+                    .thenReturn(Optional.of(slytherin));
             Mockito.when(repository.exists(any(Specification.class)))
                     .thenReturn(true);
-            Faculty hufflepuff = new Faculty(UUID.randomUUID(), "Пуффендуй", "зелёный, серебряный");
 
             Throwable thrown = catchThrowable(() -> service.update(hufflepuff));
 
@@ -191,7 +193,7 @@ class FacultyServiceImplTest {
         void updateIdIsNotPresent() {
             Mockito.when(repository.existsById(any(UUID.class)))
                     .thenReturn(false);
-            Faculty hufflepuff = new Faculty(UUID.randomUUID(), "Пуффендуй", "зелёный, серебряный");
+            Faculty hufflepuff = new Faculty(UUID.randomUUID(), "Пуффендуй", "зелёный, серебряный", new ArrayList<>());
 
             Throwable thrown = catchThrowable(() -> service.update(hufflepuff));
 

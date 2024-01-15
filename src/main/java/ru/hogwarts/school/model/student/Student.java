@@ -1,9 +1,7 @@
 package ru.hogwarts.school.model.student;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import ru.hogwarts.school.model.faculty.Faculty;
 
 import java.util.UUID;
 
@@ -16,18 +14,24 @@ public class Student {
     private String name;
     private int age;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_id")
+    private Faculty faculty;
+
     public Student() {
     }
 
-    public Student(UUID id, String name, int age) {
+    public Student(UUID id, String name, int age, Faculty faculty) {
         this.id = id;
         this.name = name;
         this.age = age;
+        this.faculty = faculty;
     }
 
-    public Student(String name, int age) {
+    public Student(String name, int age, Faculty faculty) {
         this.name = name;
         this.age = age;
+        this.faculty = faculty;
     }
 
     public UUID getId() {
@@ -52,5 +56,13 @@ public class Student {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 }

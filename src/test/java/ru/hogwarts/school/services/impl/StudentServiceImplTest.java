@@ -32,12 +32,13 @@ class StudentServiceImplTest {
 
     @Nested
     class Success {
+
         @Test
         void create() {
-            Student potter = new Student("Гарри Джеймс Поттер", 11);
+            Student potter = new Student("Гарри Джеймс Поттер", 11, null);
             Mockito.when(repository.exists(any(Specification.class)))
                     .thenReturn(false);
-            Student newStudent = new Student(UUID.randomUUID(), potter.getName(), potter.getAge());
+            Student newStudent = new Student(UUID.randomUUID(), potter.getName(), potter.getAge(), null);
             Mockito.when(repository.save(any(Student.class)))
                     .thenReturn(newStudent);
 
@@ -79,9 +80,9 @@ class StudentServiceImplTest {
 
             @BeforeEach
             public void initEach() {
-                Student granger = new Student(UUID.randomUUID(), "Гермиона Джин Грейнджер", 11);
-                malfoy = new Student(UUID.randomUUID(), "Драко Люциус Малфой", 12);
-                Student lovegood = new Student(UUID.randomUUID(), "Полумна Лавгуд", 11);
+                Student granger = new Student(UUID.randomUUID(), "Гермиона Джин Грейнджер", 11, null);
+                malfoy = new Student(UUID.randomUUID(), "Драко Люциус Малфой", 12, null);
+                Student lovegood = new Student(UUID.randomUUID(), "Полумна Лавгуд", 11, null);
                 students = Arrays.asList(granger, malfoy, lovegood);
             }
 
@@ -97,7 +98,7 @@ class StudentServiceImplTest {
 
             @Test
             void update() {
-                Student slytherin = new Student(malfoy.getId(), "Гарри Джеймс Поттер", 11);
+                Student slytherin = new Student(malfoy.getId(), "Гарри Джеймс Поттер", 11, null);
                 Mockito.when(repository.existsById(any(UUID.class)))
                         .thenReturn(true);
                 Mockito.when(repository.exists(any(Specification.class)))
@@ -139,6 +140,7 @@ class StudentServiceImplTest {
 
                 assertThat(result.getName()).isEqualTo("Драко Люциус Малфой");
             }
+
         }
 
     }
@@ -160,7 +162,7 @@ class StudentServiceImplTest {
         void update() {
             Mockito.when(repository.existsById(any(UUID.class)))
                     .thenReturn(false);
-            Student potter = new Student(UUID.randomUUID(), "Гарри Джеймс Поттер", 11);
+            Student potter = new Student(UUID.randomUUID(), "Гарри Джеймс Поттер", 11, null);
 
             Throwable thrown = catchThrowable(() -> service.update(potter));
 
