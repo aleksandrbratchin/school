@@ -16,13 +16,11 @@ public class Faculty {
     private String name;
     private String color;
 
-    @OneToMany(mappedBy = "faculty",
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            //cascade = CascadeType.ALL,
-            orphanRemoval = false)
+    @OneToMany(
+            mappedBy = "faculty",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Student> students = new ArrayList<>();
 
     public Faculty() {

@@ -11,8 +11,8 @@ import ru.hogwarts.school.services.impl.filestorage.exception.StorageFileNotFoun
 
 import java.io.*;
 import java.net.MalformedURLException;
-import java.nio.file.*;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -31,14 +31,15 @@ public class FileSystemStorageService implements StorageService {
                     InputStream is = file.getInputStream();
                     OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
                     BufferedInputStream bis = new BufferedInputStream(is, 1024);
-                    BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
-                    ) {
+                    BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
+            ) {
                 bis.transferTo(bos);
             }
         } catch (IOException e) {
             throw new StorageException("Не удалось сохранить файл.", e);
         }
     }
+
     @Override
     public Resource loadAsResource(Path file) {
         try {
@@ -53,6 +54,7 @@ public class FileSystemStorageService implements StorageService {
             throw new StorageFileNotFoundException("Не удалось прочитать файл: " + file.getFileName(), e);
         }
     }
+
     @Override
     public void deleteAll(Path location) {
         FileSystemUtils.deleteRecursively(location.toFile());

@@ -1,7 +1,6 @@
 package ru.hogwarts.school.model.avatar;
 
 import jakarta.persistence.*;
-import ru.hogwarts.school.model.faculty.Faculty;
 import ru.hogwarts.school.model.student.Student;
 
 import java.util.UUID;

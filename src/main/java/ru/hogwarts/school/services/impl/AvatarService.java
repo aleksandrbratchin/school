@@ -8,6 +8,7 @@ import ru.hogwarts.school.model.avatar.Avatar;
 import ru.hogwarts.school.model.student.Student;
 import ru.hogwarts.school.repositories.AvatarRepository;
 import ru.hogwarts.school.repositories.StudentRepository;
+import ru.hogwarts.school.services.api.StorageService;
 import ru.hogwarts.school.services.impl.filestorage.FileSystemStorageService;
 import ru.hogwarts.school.specifications.AvatarSpecification;
 
@@ -27,7 +28,7 @@ public class AvatarService {
 
     private final StudentRepository studentRepository;
     private final AvatarRepository avatarRepository;
-    private final FileSystemStorageService fileSystemStorageService;
+    private final StorageService fileSystemStorageService;
 
     public AvatarService(StudentRepository studentRepository, AvatarRepository avatarRepository, FileSystemStorageService fileSystemStorageService) {
         this.studentRepository = studentRepository;
