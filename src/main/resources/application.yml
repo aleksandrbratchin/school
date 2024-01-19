@@ -14,5 +14,5 @@ spring:
     password: chocolatefrog
 path:
   to:
-    avatar:
-      folder: /avatar
+    avatars:
+      folder: avatar

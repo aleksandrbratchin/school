@@ -34,6 +34,13 @@ public class Student {
         this.faculty = faculty;
     }
 
+    private Student(Builder builder) {
+        setId(builder.id);
+        setName(builder.name);
+        setAge(builder.age);
+        setFaculty(builder.faculty);
+    }
+
     public UUID getId() {
         return id;
     }
@@ -64,5 +71,43 @@ public class Student {
 
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
+    }
+
+    public static Student.Builder builder() {
+        return new Student.Builder();
+    }
+
+    public static final class Builder {
+        private UUID id;
+        private String name;
+        private int age;
+        private Faculty faculty;
+
+        public Builder() {
+        }
+
+        public Builder id(UUID val) {
+            id = val;
+            return this;
+        }
+
+        public Builder name(String val) {
+            name = val;
+            return this;
+        }
+
+        public Builder age(int val) {
+            age = val;
+            return this;
+        }
+
+        public Builder faculty(Faculty val) {
+            faculty = val;
+            return this;
+        }
+
+        public Student build() {
+            return new Student(this);
+        }
     }
 }

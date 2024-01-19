@@ -2,7 +2,6 @@ package ru.hogwarts.school.services.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.avatar.Avatar;
@@ -38,10 +37,17 @@ public class AvatarService {
 
     public void uploadAvatar(UUID studentId, MultipartFile avatarFile) throws IOException {
         Student student = studentRepository.getReferenceById(studentId);
-        Path filePath = Path.of(avatarsDir, student + "." + getExtensions(Objects.requireNonNull(avatarFile.getOriginalFilename())));
+        Path filePath = Path.of(avatarsDir, studentId.toString(), Objects.requireNonNull(avatarFile.getOriginalFilename())).normalize().toAbsolutePath();
+        fileSystemStorageService.deleteAll(filePath.getParent());
         fileSystemStorageService.save(filePath, avatarFile);
-        Avatar avatar = findByStudentId(studentId);
-        avatar.setStudent(student);
+        Avatar avatar = avatarRepository.findOne(
+                        AvatarSpecification.findByIdStudent(studentId)
+                )
+                .orElse(
+                        Avatar.builder()
+                                .student(student)
+                                .build()
+                );
         avatar.setFilePath(filePath.toString());
         avatar.setFileSize(avatarFile.getSize());
         avatar.setMediaType(avatarFile.getContentType());
@@ -51,12 +57,8 @@ public class AvatarService {
 
     public Resource getAvatarFromFile(Avatar avatar) {
         Optional.ofNullable(avatar).orElseThrow(IllegalArgumentException::new);
-        Path filePath = Path.of(avatarsDir, avatar.getFilePath());
+        Path filePath = Path.of(avatar.getFilePath());
         return fileSystemStorageService.loadAsResource(filePath);
-    }
-
-    private String getExtensions(String fileName) {
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     public Avatar findByStudentId(UUID studentId) {

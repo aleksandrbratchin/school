@@ -36,12 +36,12 @@ public class AvatarController {
         }
     }
 
-    @GetMapping(value = "/{id}/avatar-from-db")
+    @GetMapping(value = "/{studentId}/avatar-from-db")
     public ResponseEntity<?> downloadAvatarFromDB(
-            @PathVariable UUID id
+            @PathVariable UUID studentId
     ) {
         try {
-            Avatar avatar = avatarService.findByStudentId(id);
+            Avatar avatar = avatarService.findByStudentId(studentId);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
             headers.setContentLength(avatar.getData().length);
@@ -52,13 +52,13 @@ public class AvatarController {
 
     }
 
-    @GetMapping(value = "/{id}/avatar-from-file")
+    @GetMapping(value = "/{studentId}/avatar-from-file")
     @ResponseBody
     public ResponseEntity<?> downloadAvatarFromFile(
-            @PathVariable UUID id
+            @PathVariable UUID studentId
     ) {
         try {
-            Avatar avatar = avatarService.findById(id);
+            Avatar avatar = avatarService.findByStudentId(studentId);
             Resource file = avatarService.getAvatarFromFile(avatar);
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
@@ -69,19 +69,4 @@ public class AvatarController {
         }
     }
 
-/*    @GetMapping(value = "/{id}/avatar-from-file")
-    public void downloadAvatar(
-            @PathVariable UUID id,
-            HttpServletResponse response
-    ) throws IOException {
-        Avatar avatar = avatarService.findAvatar(id);
-        Path path = Path.of(avatar.getFilePath());
-        try (InputStream is = Files.newInputStream(path);
-             OutputStream os = response.getOutputStream();) {
-            response.setStatus(200);
-            response.setContentType(avatar.getMediaType());
-            response.setContentLength((int) avatar.getFileSize());
-            is.transferTo(os);
-        }
-    }*/
 }

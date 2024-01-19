@@ -1,6 +1,7 @@
 package ru.hogwarts.school.model.avatar;
 
 import jakarta.persistence.*;
+import ru.hogwarts.school.model.faculty.Faculty;
 import ru.hogwarts.school.model.student.Student;
 
 import java.util.UUID;
@@ -31,6 +32,15 @@ public class Avatar {
         this.mediaType = mediaType;
         this.data = data;
         this.student = student;
+    }
+
+    private Avatar(Builder builder) {
+        setId(builder.id);
+        setFilePath(builder.filePath);
+        setFileSize(builder.fileSize);
+        setMediaType(builder.mediaType);
+        setData(builder.data);
+        setStudent(builder.student);
     }
 
     public UUID getId() {
@@ -79,5 +89,55 @@ public class Avatar {
 
     public void setStudent(Student student) {
         this.student = student;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private UUID id;
+        private String filePath;
+        private long fileSize;
+        private String mediaType;
+        private byte[] data;
+        private Student student;
+
+        public Builder() {
+        }
+
+        public Builder id(UUID val) {
+            id = val;
+            return this;
+        }
+
+        public Builder filePath(String val) {
+            filePath = val;
+            return this;
+        }
+
+        public Builder fileSize(long val) {
+            fileSize = val;
+            return this;
+        }
+
+        public Builder mediaType(String val) {
+            mediaType = val;
+            return this;
+        }
+
+        public Builder data(byte[] val) {
+            data = val;
+            return this;
+        }
+
+        public Builder student(Student val) {
+            student = val;
+            return this;
+        }
+
+        public Avatar build() {
+            return new Avatar(this);
+        }
     }
 }
