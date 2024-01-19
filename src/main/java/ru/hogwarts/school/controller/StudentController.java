@@ -1,12 +1,11 @@
 package ru.hogwarts.school.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.student.Student;
-import ru.hogwarts.school.specifications.StudentSpecification;
 import ru.hogwarts.school.services.impl.StudentServiceImpl;
+import ru.hogwarts.school.specifications.StudentSpecification;
 
 import java.util.UUID;
 
@@ -69,4 +68,26 @@ public class StudentController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping(path = "{id}/faculty")
+    public ResponseEntity<?> Faculty(@PathVariable("id") UUID id) {
+        try {
+            return ResponseEntity.ok(service.findOne(StudentSpecification.idEqual(id)).getFaculty());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(path = "findByAgeBetween")
+    public ResponseEntity<?> findByAgeBetween(
+            @RequestParam Integer min,
+            @RequestParam Integer max
+    ) {
+        try {
+            return ResponseEntity.ok(service.findAll(StudentSpecification.ageInBetween(min, max)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

@@ -1,12 +1,11 @@
 package ru.hogwarts.school.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.faculty.Faculty;
-import ru.hogwarts.school.specifications.FacultySpecification;
 import ru.hogwarts.school.services.impl.FacultyServiceImpl;
+import ru.hogwarts.school.specifications.FacultySpecification;
 
 import java.util.UUID;
 
@@ -70,4 +69,26 @@ public class FacultyController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping(path = "{id}/students")
+    public ResponseEntity<?> Students(@PathVariable("id") UUID id) {
+        try {
+            return ResponseEntity.ok(service.findOne(FacultySpecification.idEqual(id)).getStudents());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(path = "findByNameOrColor")
+    public ResponseEntity<?> findByNameOrColor(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String color
+    ) {
+        try {
+            return ResponseEntity.ok(service.findAll(FacultySpecification.findByNameOrColor(name, color)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

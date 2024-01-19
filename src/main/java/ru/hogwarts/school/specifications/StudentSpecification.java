@@ -22,4 +22,10 @@ public class StudentSpecification {
                 criteriaBuilder.equal(root.get("id"), id);
     }
 
+    public static Specification<Student> ageInBetween(Integer min, Integer max) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.between(root.get("age"), min, max);
+    }
+
+
 }
