@@ -2,6 +2,7 @@ package ru.hogwarts.school.services.impl;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.hogwarts.school.model.student.Student;
 import ru.hogwarts.school.repositories.StudentRepository;
 import ru.hogwarts.school.services.api.StudentService;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository repository;

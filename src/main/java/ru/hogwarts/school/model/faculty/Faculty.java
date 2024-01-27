@@ -16,7 +16,11 @@ public class Faculty {
     private String name;
     private String color;
 
-    @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "faculty",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Student> students = new ArrayList<>();
 
     public Faculty() {
@@ -33,6 +37,13 @@ public class Faculty {
         this.name = name;
         this.color = color;
         this.students = students;
+    }
+
+    private Faculty(Builder builder) {
+        setId(builder.id);
+        setName(builder.name);
+        setColor(builder.color);
+        setStudents(builder.students);
     }
 
     public UUID getId() {
@@ -65,5 +76,44 @@ public class Faculty {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private UUID id;
+        private String name;
+        private String color;
+        private List<Student> students;
+
+        public Builder() {
+        }
+
+        public Builder id(UUID val) {
+            id = val;
+            return this;
+        }
+
+        public Builder name(String val) {
+            name = val;
+            return this;
+        }
+
+        public Builder color(String val) {
+            color = val;
+            return this;
+        }
+
+        public Builder students(List<Student> val) {
+            students = val;
+            return this;
+        }
+
+        public Faculty build() {
+            return new Faculty(this);
+        }
     }
 }
