@@ -48,6 +48,6 @@ class StudentAddRequestMapperTest {
     void dtoIsNull() {
         Throwable thrown = catchThrowable(() -> mapper.fromDto(null));
 
-        assertThat(thrown).isInstanceOf(NullPointerException.class);
+        assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
     }
 }

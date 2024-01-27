@@ -101,8 +101,6 @@ class StudentServiceImplTest {
                 Student slytherin = new Student(malfoy.getId(), "Гарри Джеймс Поттер", 11, null);
                 Mockito.when(repository.existsById(any(UUID.class)))
                         .thenReturn(true);
-                Mockito.when(repository.exists(any(Specification.class)))
-                        .thenReturn(false);
                 Mockito.when(repository.save(any(Student.class)))
                         .thenReturn(slytherin);
 

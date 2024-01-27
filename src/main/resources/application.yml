@@ -9,7 +9,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/hogwarts
+    url: jdbc:postgresql://94.158.219.127:5433/hogwarts
     username: student
     password: chocolatefrog
 path:
