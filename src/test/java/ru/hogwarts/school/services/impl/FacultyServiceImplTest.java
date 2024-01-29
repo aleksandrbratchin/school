@@ -134,13 +134,13 @@ class FacultyServiceImplTest {
             }
 
             @Test
-            void findOne() {
-                Mockito.when(repository.findOne(any(Specification.class)))
-                        .thenReturn(Optional.of(ravenclaw));
+            void findByColor() {
+                Mockito.when(repository.findAll(any(Specification.class)))
+                        .thenReturn(List.of(ravenclaw));
 
-                Faculty result = service.findOne(FacultySpecification.colorLike("синий"));
+                List<Faculty> result = service.findAll(FacultySpecification.colorLike("синий"));
 
-                assertThat(result.getName()).isEqualTo("Когтевран");
+                assertThat(result.size()).isEqualTo(1);
             }
         }
 

@@ -91,9 +91,6 @@ public class StudentController {
     @GetMapping(path = "All")
     public ResponseEntity<?> getAll() {
         try {
-            List<StudentResponseDto> list = service.findAll().stream().map(
-                    studentResponseMapper::toDto
-            ).toList();
             return ResponseEntity.ok(
                     service.findAll()
                             .stream()

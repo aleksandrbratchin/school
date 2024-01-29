@@ -21,8 +21,8 @@ public class StudentAddRequestMapper implements RequestMapper<Student, StudentAd
 
     @Override
     public Student fromDto(StudentAddRequestDto dto) {
-        Optional.ofNullable(dto.facultyId()).orElseThrow(IllegalArgumentException::new);
-        Faculty faculty = facultyService.findOne(FacultySpecification.idEqual(dto.facultyId()));
+        Optional.ofNullable(dto).orElseThrow(IllegalArgumentException::new);
+        Faculty faculty = dto.facultyId() == null ? null : facultyService.findOne(FacultySpecification.idEqual(dto.facultyId()));
         return Student.builder()
                 .name(dto.name())
                 .age(dto.age())

@@ -25,8 +25,9 @@ public class StudentUpdateRequestMapper implements RequestMapper<Student, Studen
 
     @Override
     public Student fromDto(StudentUpdateRequestDto dto) {
-        Optional.ofNullable(dto.facultyId()).orElseThrow(IllegalArgumentException::new);
-        Faculty faculty = facultyService.findOne(FacultySpecification.idEqual(dto.facultyId()));
+        Optional.ofNullable(dto).orElseThrow(IllegalArgumentException::new);
+        Optional.ofNullable(dto.id()).orElseThrow(IllegalArgumentException::new);
+        Faculty faculty = dto.facultyId() == null ? null : facultyService.findOne(FacultySpecification.idEqual(dto.facultyId()));
         Student student = studentService.findOne(StudentSpecification.idEqual(dto.id()));
         student.setName(dto.name());
         student.setAge(dto.age());
