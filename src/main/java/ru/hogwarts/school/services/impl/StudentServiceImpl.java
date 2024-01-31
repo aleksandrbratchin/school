@@ -3,6 +3,8 @@ package ru.hogwarts.school.services.impl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.hogwarts.school.dto.student.AverageAgeOfStudents;
+import ru.hogwarts.school.dto.student.NumberOfStudents;
 import ru.hogwarts.school.model.student.Student;
 import ru.hogwarts.school.repositories.StudentRepository;
 import ru.hogwarts.school.services.api.StudentService;
@@ -74,4 +76,18 @@ public class StudentServiceImpl implements StudentService {
         return repository.findOne(specification).orElseThrow(NoSuchElementException::new);
     }
 
+    @Override
+    public AverageAgeOfStudents getAverageAge() {
+        return repository.getAverageAge().orElseThrow(NullPointerException::new);
+    }
+
+    @Override
+    public NumberOfStudents getCountStudents() {
+        return repository.getCountStudents().orElseThrow(NullPointerException::new);
+    }
+
+    @Override
+    public List<Student> getLastFiveOldStudents() {
+        return repository.getLastFiveOldStudents();
+    }
 }
