@@ -2,6 +2,7 @@ package ru.hogwarts.school.services.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.avatar.Avatar;
@@ -14,10 +15,7 @@ import ru.hogwarts.school.specifications.AvatarSpecification;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -72,5 +70,10 @@ public class AvatarService {
         Optional.ofNullable(id).orElseThrow(IllegalArgumentException::new);
         return avatarRepository.findOne(AvatarSpecification.idEqual(id))
                 .orElseThrow(NoSuchElementException::new);
+    }
+
+    public List<Avatar> findAll(Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        return avatarRepository.findAll(pageRequest).getContent();
     }
 }

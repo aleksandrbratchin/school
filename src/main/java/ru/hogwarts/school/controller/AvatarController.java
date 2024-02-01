@@ -8,19 +8,25 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.hogwarts.school.dto.avatar.AvatarDto;
+import ru.hogwarts.school.mapper.ResponseMapper;
+import ru.hogwarts.school.mapper.avatar.AvatarMapper;
 import ru.hogwarts.school.model.avatar.Avatar;
 import ru.hogwarts.school.services.impl.AvatarService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("faculty")
+@RequestMapping("student/avatar")
 public class AvatarController {
 
     private final AvatarService avatarService;
+    private final ResponseMapper<Avatar, AvatarDto> avatarMapper;
 
-    public AvatarController(@Qualifier("avatarService") AvatarService avatarService) {
+    public AvatarController(@Qualifier("avatarService") AvatarService avatarService, AvatarMapper avatarMapper) {
         this.avatarService = avatarService;
+        this.avatarMapper = avatarMapper;
     }
 
     @PostMapping(value = "/{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -53,7 +59,6 @@ public class AvatarController {
     }
 
     @GetMapping(value = "/{studentId}/avatar-from-file")
-    @ResponseBody
     public ResponseEntity<?> downloadAvatarFromFile(
             @PathVariable UUID studentId
     ) {
@@ -64,6 +69,23 @@ public class AvatarController {
             responseHeaders.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
             responseHeaders.setContentLength((int) avatar.getFileSize());
             return new ResponseEntity<>(file, responseHeaders, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(value = "/All")
+    public ResponseEntity<?> All(
+            @RequestParam("page") Integer pageNumber,
+            @RequestParam("size") Integer pageSize
+    ) {
+        try {
+            List<Avatar> avatars = avatarService.findAll(pageNumber, pageSize);
+            return ResponseEntity.ok(
+                    avatars.stream()
+                            .map(avatarMapper::toDto)
+                            .toList()
+            );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

@@ -15,7 +15,6 @@ import ru.hogwarts.school.services.api.StudentService;
 import ru.hogwarts.school.services.impl.StudentServiceImpl;
 import ru.hogwarts.school.specifications.StudentSpecification;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -137,6 +136,42 @@ public class StudentController {
         try {
             return ResponseEntity.ok(
                     service.findAll(StudentSpecification.ageInBetween(min, max))
+                            .stream()
+                            .map(studentResponseMapper::toDto)
+                            .toList()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(path = "getAverageAge")
+    public ResponseEntity<?> getAverageAge() {
+        try {
+            return ResponseEntity.ok(
+                    service.getAverageAge()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(path = "getCountStudents")
+    public ResponseEntity<?> getCountStudents() {
+        try {
+            return ResponseEntity.ok(
+                    service.getCountStudents()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(path = "getLastFiveOldStudents")
+    public ResponseEntity<?> getLastFiveOldStudents() {
+        try {
+            return ResponseEntity.ok(
+                    service.getLastFiveOldStudents()
                             .stream()
                             .map(studentResponseMapper::toDto)
                             .toList()

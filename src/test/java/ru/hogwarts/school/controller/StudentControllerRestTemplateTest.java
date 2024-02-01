@@ -13,6 +13,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
 import ru.hogwarts.school.dto.faculty.FacultyResponseDto;
+import ru.hogwarts.school.dto.student.AverageAgeOfStudents;
+import ru.hogwarts.school.dto.student.NumberOfStudents;
 import ru.hogwarts.school.dto.student.StudentResponseDto;
 import ru.hogwarts.school.model.faculty.Faculty;
 import ru.hogwarts.school.model.student.Student;
@@ -222,4 +224,58 @@ class StudentControllerRestTemplateTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().size()).isEqualTo(2);
     }
+
+    @Test
+    void getAverageAge() {
+        Mockito.when(repository.getAverageAge())
+                .thenReturn(Optional.of(new AverageAgeOfStudents(11.5)));
+
+        ResponseEntity<AverageAgeOfStudents> response = restTemplate.exchange(
+                "/student/getAverageAge",
+                HttpMethod.GET,
+                null,
+                AverageAgeOfStudents.class
+        );
+
+        assertThat(response.getBody().age()).isEqualTo(11.5);
+    }
+
+    @Test
+    void getCountStudents() {
+        Mockito.when(repository.getCountStudents())
+                .thenReturn(Optional.of(new NumberOfStudents(99)));
+
+        ResponseEntity<NumberOfStudents> response = restTemplate.exchange(
+                "/student/getCountStudents",
+                HttpMethod.GET,
+                null,
+                NumberOfStudents.class
+        );
+
+        assertThat(response.getBody().getCount()).isEqualTo(99);
+    }
+
+    @Test
+    void getLastFiveOldStudents() {
+        Student potter = new Student(UUID.randomUUID(), "Гарри Джеймс Поттер", 11, null);
+        Student lovegood = new Student(UUID.randomUUID(), "Полумна Лавгуд", 11, null);
+        Student granger = new Student(UUID.randomUUID(), "Гермиона Джин Грейнджер", 11, null);
+        Student malfoy = new Student(UUID.randomUUID(), "Драко Люциус Малфой", 12, null);
+        Student weasley = new Student(UUID.randomUUID(), "Рональд Билиус Уизли", 11, null);
+        Mockito.when(repository.getLastFiveOldStudents())
+                .thenReturn(List.of(potter, lovegood, granger, malfoy, weasley));
+
+        ResponseEntity<List<StudentResponseDto>> response = restTemplate.exchange(
+                "/student/getLastFiveOldStudents",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(5);
+    }
+
+
 }

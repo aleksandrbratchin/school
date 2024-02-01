@@ -25,11 +25,11 @@ public class FacultyInfoMapper implements Mapper<Faculty, FacultyInfoDto> {
     }
 
     @Override
-    public FacultyInfoDto toDto(Faculty dto) {
+    public FacultyInfoDto toDto(Faculty obj) {
         return new FacultyInfoDto(
-                dto.getId(),
-                dto.getName(),
-                dto.getColor()
+                obj.getId(),
+                obj.getName(),
+                obj.getColor()
         );
     }
 
