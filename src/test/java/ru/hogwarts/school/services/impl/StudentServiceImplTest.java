@@ -8,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.hogwarts.school.dto.student.AverageAgeOfStudents;
-import ru.hogwarts.school.dto.student.NumberOfStudents;
 import ru.hogwarts.school.model.student.Student;
 import ru.hogwarts.school.repositories.StudentRepository;
 import ru.hogwarts.school.specifications.StudentSpecification;
@@ -38,21 +36,21 @@ class StudentServiceImplTest {
         @Test
         void getAverageAge() {
             Mockito.when(repository.getAverageAge())
-                    .thenReturn(Optional.of(new AverageAgeOfStudents(11.5)));
+                    .thenReturn(11.5);
 
-            AverageAgeOfStudents age = service.getAverageAge();
+            Double age = service.getAverageAge();
 
-            assertThat(age.age()).isEqualTo(11.5);
+            assertThat(age).isEqualTo(11.5);
         }
 
         @Test
         void getCountStudents() {
             Mockito.when(repository.getCountStudents())
-                    .thenReturn(Optional.of(new NumberOfStudents(99)));
+                    .thenReturn(99);
 
-            NumberOfStudents count = service.getCountStudents();
+            Integer count = service.getCountStudents();
 
-            assertThat(count.getCount()).isEqualTo(99);
+            assertThat(count).isEqualTo(99);
         }
 
         @Test

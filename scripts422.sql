@@ -8,7 +8,7 @@ CREATE TABLE car (
 CREATE TABLE person (
 	id SERIAL PRIMARY KEY,
 	name varchar(255) CHECK(name !='') NOT NULL,
-	age int8 DEFAULT 18 CHECK(Age >= 18 AND Age < 100) NOT NULL,
+	age int8 DEFAULT 18 CHECK(age >= 18 AND age < 100) NOT NULL,
 	is_driver_license boolean DEFAULT false NOT NULL,
 	car_id INTEGER REFERENCES car(id) NOT NULL
 );

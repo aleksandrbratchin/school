@@ -13,8 +13,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
 import ru.hogwarts.school.dto.faculty.FacultyResponseDto;
-import ru.hogwarts.school.dto.student.AverageAgeOfStudents;
-import ru.hogwarts.school.dto.student.NumberOfStudents;
 import ru.hogwarts.school.dto.student.StudentResponseDto;
 import ru.hogwarts.school.model.faculty.Faculty;
 import ru.hogwarts.school.model.student.Student;
@@ -228,31 +226,31 @@ class StudentControllerRestTemplateTest {
     @Test
     void getAverageAge() {
         Mockito.when(repository.getAverageAge())
-                .thenReturn(Optional.of(new AverageAgeOfStudents(11.5)));
+                .thenReturn(11.5);
 
-        ResponseEntity<AverageAgeOfStudents> response = restTemplate.exchange(
+        ResponseEntity<Double> response = restTemplate.exchange(
                 "/student/getAverageAge",
                 HttpMethod.GET,
                 null,
-                AverageAgeOfStudents.class
+                Double.class
         );
 
-        assertThat(response.getBody().age()).isEqualTo(11.5);
+        assertThat(response.getBody()).isEqualTo(11.5);
     }
 
     @Test
     void getCountStudents() {
         Mockito.when(repository.getCountStudents())
-                .thenReturn(Optional.of(new NumberOfStudents(99)));
+                .thenReturn(99);
 
-        ResponseEntity<NumberOfStudents> response = restTemplate.exchange(
+        ResponseEntity<Integer> response = restTemplate.exchange(
                 "/student/getCountStudents",
                 HttpMethod.GET,
                 null,
-                NumberOfStudents.class
+                Integer.class
         );
 
-        assertThat(response.getBody().getCount()).isEqualTo(99);
+        assertThat(response.getBody()).isEqualTo(99);
     }
 
     @Test
