@@ -16,12 +16,14 @@ public class FacultyResponseMapper implements ResponseMapper<Faculty, FacultyRes
     }
 
     @Override
-    public FacultyResponseDto toDto(Faculty dto) {
+    public FacultyResponseDto toDto(Faculty obj) {
         return new FacultyResponseDto(
-                dto.getId(),
-                dto.getName(),
-                dto.getColor(),
-                dto.getStudents().stream().map(studentResponseMapper::toDto).toList()
+                obj.getId(),
+                obj.getName(),
+                obj.getColor(),
+                obj.getStudents().stream().map(
+                        studentResponseMapper::toDto
+                ).toList()
         );
     }
 }

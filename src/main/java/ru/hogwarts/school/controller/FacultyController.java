@@ -5,15 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.dto.faculty.FacultyAddRequestDto;
 import ru.hogwarts.school.dto.faculty.FacultyInfoDto;
-import ru.hogwarts.school.dto.faculty.FacultyResponseDto;
-import ru.hogwarts.school.dto.student.StudentResponseDto;
-import ru.hogwarts.school.mapper.Mapper;
-import ru.hogwarts.school.mapper.RequestMapper;
-import ru.hogwarts.school.mapper.ResponseMapper;
-import ru.hogwarts.school.model.faculty.Faculty;
-import ru.hogwarts.school.model.student.Student;
 import ru.hogwarts.school.services.api.FacultyService;
-import ru.hogwarts.school.specifications.FacultySpecification;
 
 import java.util.UUID;
 
@@ -22,22 +14,11 @@ import java.util.UUID;
 public class FacultyController {
 
     private final FacultyService service;
-    private final Mapper<Faculty, FacultyInfoDto> facultyInfoMapper;
-    private final RequestMapper<Faculty, FacultyAddRequestDto> facultyAddRequestMapper;
-    private final ResponseMapper<Faculty, FacultyResponseDto> facultyResponseMapper;
-    private final ResponseMapper<Student, StudentResponseDto> studentResponseMapper;
 
     public FacultyController(
-            @Qualifier("facultyServiceImpl") FacultyService service,
-            Mapper<Faculty, FacultyInfoDto> facultyInfoMapper,
-            RequestMapper<Faculty, FacultyAddRequestDto> facultyAddRequestMapper,
-            ResponseMapper<Faculty, FacultyResponseDto> facultyResponseMapper,
-            ResponseMapper<Student, StudentResponseDto> studentResponseMapper) {
+            @Qualifier("facultyServiceImpl") FacultyService service
+    ) {
         this.service = service;
-        this.facultyInfoMapper = facultyInfoMapper;
-        this.facultyAddRequestMapper = facultyAddRequestMapper;
-        this.facultyResponseMapper = facultyResponseMapper;
-        this.studentResponseMapper = studentResponseMapper;
     }
 
     @DeleteMapping("{id}")
@@ -46,7 +27,7 @@ public class FacultyController {
     ) {
         try {
             return ResponseEntity.ok(
-                    facultyInfoMapper.toDto(service.delete(id))
+                    service.deleteDto(id)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -59,11 +40,7 @@ public class FacultyController {
     ) {
         try {
             return ResponseEntity.ok(
-                    facultyInfoMapper.toDto(
-                            service.create(
-                                    facultyAddRequestMapper.fromDto(faculty)
-                            )
-                    )
+                    service.createFacultyAdd(faculty)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -76,11 +53,7 @@ public class FacultyController {
     ) {
         try {
             return ResponseEntity.ok(
-                    facultyInfoMapper.toDto(
-                            service.update(
-                                    facultyInfoMapper.fromDto(faculty)
-                            )
-                    )
+                    service.updateFacultyInfo(faculty)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -91,10 +64,7 @@ public class FacultyController {
     public ResponseEntity<?> getAll() {
         try {
             return ResponseEntity.ok(
-                    service.findAll()
-                            .stream()
-                            .map(facultyResponseMapper::toDto)
-                            .toList()
+                    service.findAllDto()
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -105,10 +75,7 @@ public class FacultyController {
     public ResponseEntity<?> filterByColor(@RequestParam String color) {
         try {
             return ResponseEntity.ok(
-                    service.findAll(FacultySpecification.colorLike(color))
-                            .stream()
-                            .map(facultyResponseMapper::toDto)
-                            .toList()
+                    service.filterByColor(color)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -116,13 +83,10 @@ public class FacultyController {
     }
 
     @GetMapping(path = "{id}/students")
-    public ResponseEntity<?> Students(@PathVariable("id") UUID id) {
+    public ResponseEntity<?> getStudentsById(@PathVariable("id") UUID id) {
         try {
             return ResponseEntity.ok(
-                    service.findOne(FacultySpecification.idEqual(id)).getStudents()
-                            .stream()
-                            .map(studentResponseMapper::toDto)
-                            .toList()
+                    service.getStudentsById(id)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -136,10 +100,7 @@ public class FacultyController {
     ) {
         try {
             return ResponseEntity.ok(
-                    service.findAll(FacultySpecification.findByNameOrColor(name, color))
-                            .stream()
-                            .map(facultyResponseMapper::toDto)
-                            .toList()
+                    service.findByNameOrColor(name, color)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

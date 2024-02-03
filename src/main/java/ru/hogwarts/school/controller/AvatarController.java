@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.dto.avatar.AvatarDto;
-import ru.hogwarts.school.mapper.ResponseMapper;
-import ru.hogwarts.school.mapper.avatar.AvatarMapper;
 import ru.hogwarts.school.model.avatar.Avatar;
 import ru.hogwarts.school.services.impl.AvatarService;
 
