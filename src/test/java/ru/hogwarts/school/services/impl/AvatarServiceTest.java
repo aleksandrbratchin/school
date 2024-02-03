@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ru.hogwarts.school.mapper.avatar.AvatarMapper;
 import ru.hogwarts.school.model.avatar.Avatar;
 import ru.hogwarts.school.repositories.AvatarRepository;
 import ru.hogwarts.school.repositories.StudentRepository;
@@ -30,10 +32,12 @@ class AvatarServiceTest {
     private AvatarRepository avatarRepository;
     @Mock
     private FileSystemStorageService fileSystemStorageService;
+    @Spy
+    private AvatarMapper avatarMapper;
 
     @BeforeEach
     void setUp() {
-        service = new AvatarService(studentRepository, avatarRepository, fileSystemStorageService);
+        service = new AvatarService(studentRepository, avatarRepository, fileSystemStorageService, avatarMapper);
     }
 
     @Nested
