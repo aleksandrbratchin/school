@@ -1,12 +1,34 @@
 package ru.hogwarts.school.services.api;
 
+import ru.hogwarts.school.dto.faculty.FacultyResponseDto;
+import ru.hogwarts.school.dto.student.StudentAddRequestDto;
+import ru.hogwarts.school.dto.student.StudentResponseDto;
+import ru.hogwarts.school.dto.student.StudentUpdateRequestDto;
 import ru.hogwarts.school.model.student.Student;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface StudentService extends CRUDService<UUID, Student> {
+    StudentResponseDto create(StudentAddRequestDto student);
+
+    StudentResponseDto update(StudentUpdateRequestDto studentDto);
+
+    StudentResponseDto deleteById(UUID id);
+
+    List<StudentResponseDto> findAllDto();
+
+    List<StudentResponseDto> filterByAge(int age);
+
+    FacultyResponseDto filterByAge(UUID id);
+
+    FacultyResponseDto getFacultyById(UUID id);
+
+    List<StudentResponseDto> findByAgeBetween(int min, int max);
+
     Double getAverageAge();
+
     Integer getCountStudents();
-    List<Student> getLastFiveOldStudents();
+
+    List<StudentResponseDto> getLastFiveOldStudents();
 }

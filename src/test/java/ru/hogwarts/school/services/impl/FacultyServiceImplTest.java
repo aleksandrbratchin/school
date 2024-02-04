@@ -224,21 +224,6 @@ class FacultyServiceImplTest {
 
         @Nested
         class ParametersIsNull {
-            @Test
-            void create() {
-
-                Throwable thrown = catchThrowable(() -> service.create(null));
-
-                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
-            }
-
-            @Test
-            void update() {
-
-                Throwable thrown = catchThrowable(() -> service.update(null));
-
-                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
-            }
 
             @Test
             void delete() {

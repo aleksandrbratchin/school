@@ -27,7 +27,7 @@ public class FacultyController {
     ) {
         try {
             return ResponseEntity.ok(
-                    service.deleteDto(id)
+                    service.deleteById(id)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -40,7 +40,7 @@ public class FacultyController {
     ) {
         try {
             return ResponseEntity.ok(
-                    service.createFacultyAdd(faculty)
+                    service.create(faculty)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -53,7 +53,7 @@ public class FacultyController {
     ) {
         try {
             return ResponseEntity.ok(
-                    service.updateFacultyInfo(faculty)
+                    service.update(faculty)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

@@ -46,15 +46,10 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public FacultyInfoDto createFacultyAdd(FacultyAddRequestDto facultyDto) {
+    public FacultyInfoDto create(FacultyAddRequestDto facultyDto) {
         Optional.ofNullable(facultyDto).orElseThrow(IllegalArgumentException::new);
         Faculty faculty = facultyAddRequestMapper.fromDto(facultyDto);
-        String name = faculty.getName();
-        if (repository.exists(FacultySpecification.nameEqual(name))) {
-            throw new IllegalArgumentException("Факультет '" + name + "' уже добавлен!");
-        }
-        faculty.setId(null);
-        return facultyInfoMapper.toDto(repository.save(faculty));
+        return facultyInfoMapper.toDto(create(faculty));
     }
 
     @Override
@@ -90,7 +85,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public FacultyInfoDto updateFacultyInfo(FacultyInfoDto facultyDto) {
+    public FacultyInfoDto update(FacultyInfoDto facultyDto) {
         Optional.ofNullable(facultyDto).orElseThrow(IllegalArgumentException::new);
         Faculty faculty = findOne(FacultySpecification.idEqual(facultyDto.id()));
         faculty.setName(facultyDto.name());
@@ -112,7 +107,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public FacultyInfoDto deleteDto(UUID id) {
+    public FacultyInfoDto deleteById(UUID id) {
         return facultyInfoMapper.toDto(delete(id));
     }
 

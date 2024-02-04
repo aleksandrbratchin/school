@@ -11,11 +11,11 @@ import java.util.UUID;
 
 public interface FacultyService extends CRUDService<UUID, Faculty> {
 
-    FacultyInfoDto createFacultyAdd(FacultyAddRequestDto facultyDto);
+    FacultyInfoDto create(FacultyAddRequestDto facultyDto);
 
-    FacultyInfoDto updateFacultyInfo(FacultyInfoDto facultyDto);
+    FacultyInfoDto update(FacultyInfoDto facultyDto);
 
-    FacultyInfoDto deleteDto(UUID id);
+    FacultyInfoDto deleteById(UUID id);
 
     List<FacultyResponseDto> findAllDto();
 

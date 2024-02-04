@@ -3,17 +3,10 @@ package ru.hogwarts.school.controller;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hogwarts.school.dto.faculty.FacultyResponseDto;
 import ru.hogwarts.school.dto.student.StudentAddRequestDto;
-import ru.hogwarts.school.dto.student.StudentResponseDto;
 import ru.hogwarts.school.dto.student.StudentUpdateRequestDto;
-import ru.hogwarts.school.mapper.RequestMapper;
-import ru.hogwarts.school.mapper.ResponseMapper;
-import ru.hogwarts.school.model.faculty.Faculty;
-import ru.hogwarts.school.model.student.Student;
 import ru.hogwarts.school.services.api.StudentService;
 import ru.hogwarts.school.services.impl.StudentServiceImpl;
-import ru.hogwarts.school.specifications.StudentSpecification;
 
 import java.util.UUID;
 
@@ -21,21 +14,11 @@ import java.util.UUID;
 @RequestMapping("student")
 public class StudentController {
     private final StudentService service;
-    private final RequestMapper<Student, StudentUpdateRequestDto> studentUpdateRequestMapper;
-    private final RequestMapper<Student, StudentAddRequestDto> studentAddRequestMapper;
-    private final ResponseMapper<Student, StudentResponseDto> studentResponseMapper;
-    private final ResponseMapper<Faculty, FacultyResponseDto> facultyResponseMapper;
+
 
     public StudentController(
-            @Qualifier("studentServiceImpl") StudentServiceImpl service,
-            RequestMapper<Student, StudentUpdateRequestDto> studentUpdateRequestMapper,
-            RequestMapper<Student, StudentAddRequestDto> studentAddRequestMapper,
-            ResponseMapper<Student, StudentResponseDto> studentResponseMapper, ResponseMapper<Faculty, FacultyResponseDto> facultyResponseMapper) {
+            @Qualifier("studentServiceImpl") StudentServiceImpl service) {
         this.service = service;
-        this.studentUpdateRequestMapper = studentUpdateRequestMapper;
-        this.studentAddRequestMapper = studentAddRequestMapper;
-        this.studentResponseMapper = studentResponseMapper;
-        this.facultyResponseMapper = facultyResponseMapper;
     }
 
     @DeleteMapping("{id}")
@@ -44,9 +27,7 @@ public class StudentController {
     ) {
         try {
             return ResponseEntity.ok(
-                    studentResponseMapper.toDto(
-                            service.delete(id)
-                    )
+                    service.deleteById(id)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -59,11 +40,7 @@ public class StudentController {
     ) {
         try {
             return ResponseEntity.ok(
-                    studentResponseMapper.toDto(
-                            service.create(
-                                    studentAddRequestMapper.fromDto(student)
-                            )
-                    )
+                    service.create(student)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -76,11 +53,7 @@ public class StudentController {
     ) {
         try {
             return ResponseEntity.ok(
-                    studentResponseMapper.toDto(
-                            service.update(
-                                    studentUpdateRequestMapper.fromDto(student)
-                            )
-                    )
+                    service.update(student)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -91,10 +64,7 @@ public class StudentController {
     public ResponseEntity<?> getAll() {
         try {
             return ResponseEntity.ok(
-                    service.findAll()
-                            .stream()
-                            .map(studentResponseMapper::toDto)
-                            .toList()
+                    service.findAllDto()
             );
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -102,13 +72,10 @@ public class StudentController {
     }
 
     @GetMapping(path = "filterByAge")
-    public ResponseEntity<?> filterByAge(@RequestParam Integer age) {
+    public ResponseEntity<?> filterByAge(@RequestParam int age) {
         try {
             return ResponseEntity.ok(
-                    service.findAll(StudentSpecification.ageEqual(age))
-                            .stream()
-                            .map(studentResponseMapper::toDto)
-                            .toList()
+                    service.filterByAge(age)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -116,12 +83,10 @@ public class StudentController {
     }
 
     @GetMapping(path = "{id}/faculty")
-    public ResponseEntity<?> Faculty(@PathVariable("id") UUID id) {
+    public ResponseEntity<?> getFacultyById(@PathVariable("id") UUID id) {
         try {
             return ResponseEntity.ok(
-                    facultyResponseMapper.toDto(
-                            service.findOne(StudentSpecification.idEqual(id)).getFaculty()
-                    )
+                    service.getFacultyById(id)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -130,15 +95,12 @@ public class StudentController {
 
     @GetMapping(path = "findByAgeBetween")
     public ResponseEntity<?> findByAgeBetween(
-            @RequestParam Integer min,
-            @RequestParam Integer max
+            @RequestParam int min,
+            @RequestParam int max
     ) {
         try {
             return ResponseEntity.ok(
-                    service.findAll(StudentSpecification.ageInBetween(min, max))
-                            .stream()
-                            .map(studentResponseMapper::toDto)
-                            .toList()
+                    service.findByAgeBetween(min, max)
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -172,9 +134,6 @@ public class StudentController {
         try {
             return ResponseEntity.ok(
                     service.getLastFiveOldStudents()
-                            .stream()
-                            .map(studentResponseMapper::toDto)
-                            .toList()
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
