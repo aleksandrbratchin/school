@@ -12,7 +12,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    private int age;
+    private Integer age;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id")
@@ -21,14 +21,14 @@ public class Student {
     public Student() {
     }
 
-    public Student(UUID id, String name, int age, Faculty faculty) {
+    public Student(UUID id, String name, Integer age, Faculty faculty) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.faculty = faculty;
     }
 
-    public Student(String name, int age, Faculty faculty) {
+    public Student(String name, Integer age, Faculty faculty) {
         this.name = name;
         this.age = age;
         this.faculty = faculty;
@@ -57,11 +57,11 @@ public class Student {
         this.name = name;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -80,7 +80,7 @@ public class Student {
     public static final class Builder {
         private UUID id;
         private String name;
-        private int age;
+        private Integer age;
         private Faculty faculty;
 
         public Builder() {
@@ -96,7 +96,7 @@ public class Student {
             return this;
         }
 
-        public Builder age(int val) {
+        public Builder age(Integer val) {
             age = val;
             return this;
         }

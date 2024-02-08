@@ -7,6 +7,6 @@ import java.util.UUID;
 public record StudentResponseDto (
         UUID id,
         String name,
-        int age,
+        Integer age,
         FacultyInfoDto faculty
 ) {}

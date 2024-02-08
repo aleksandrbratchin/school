@@ -28,23 +28,17 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository repository;
     private final FacultyService facultyService;
-    private final RequestMapper<Student, StudentUpdateRequestDto> studentUpdateRequestMapper;
-    private final RequestMapper<Student, StudentAddRequestDto> studentAddRequestMapper;
     private final ResponseMapper<Student, StudentResponseDto> studentResponseMapper;
     private final ResponseMapper<Faculty, FacultyResponseDto> facultyResponseMapper;
 
     public StudentServiceImpl(
             StudentRepository studentRepository,
             FacultyService facultyServiceImpl,
-            RequestMapper<Student, StudentUpdateRequestDto> studentUpdateRequestMapper,
-            RequestMapper<Student, StudentAddRequestDto> studentAddRequestMapper,
             ResponseMapper<Student, StudentResponseDto> studentResponseMapper,
             ResponseMapper<Faculty, FacultyResponseDto> facultyResponseMapper
     ) {
         this.repository = studentRepository;
         this.facultyService = facultyServiceImpl;
-        this.studentUpdateRequestMapper = studentUpdateRequestMapper;
-        this.studentAddRequestMapper = studentAddRequestMapper;
         this.studentResponseMapper = studentResponseMapper;
         this.facultyResponseMapper = facultyResponseMapper;
     }
@@ -85,12 +79,6 @@ public class StudentServiceImpl implements StudentService {
     public StudentResponseDto update(StudentUpdateRequestDto studentDto) {
         Optional.ofNullable(studentDto).orElseThrow(IllegalArgumentException::new);
         UUID id = studentDto.id();
-        if (!repository.existsById(id)) {
-            throw new NoSuchElementException(
-                    "Ошибка при попытке изменения студента! " +
-                            "Студент с id = '" + id + "' не найден."
-            );
-        }
         Faculty faculty = studentDto.facultyId() == null ?
                 null :
                 facultyService.findOne(FacultySpecification.idEqual(studentDto.facultyId()));
@@ -99,7 +87,7 @@ public class StudentServiceImpl implements StudentService {
         student.setAge(studentDto.age());
         student.setFaculty(faculty);
         return studentResponseMapper.toDto(
-                repository.save(student)
+                update(student)
         );
     }
 
@@ -147,16 +135,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentResponseDto> filterByAge(int age) {
+    public List<StudentResponseDto> filterByAge(Integer age) {
         return findAll(StudentSpecification.ageEqual(age))
                 .stream()
                 .map(studentResponseMapper::toDto)
                 .toList();
-    }
-
-    @Override
-    public FacultyResponseDto filterByAge(UUID id) {
-        return null;
     }
 
     @Override
@@ -167,7 +150,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentResponseDto> findByAgeBetween(int min, int max) {
+    public List<StudentResponseDto> findByAgeBetween(Integer min, Integer max) {
         return findAll(StudentSpecification.ageInBetween(min, max))
                 .stream()
                 .map(studentResponseMapper::toDto)

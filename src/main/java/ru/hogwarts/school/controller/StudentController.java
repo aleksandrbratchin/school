@@ -15,7 +15,6 @@ import java.util.UUID;
 public class StudentController {
     private final StudentService service;
 
-
     public StudentController(
             @Qualifier("studentServiceImpl") StudentServiceImpl service) {
         this.service = service;
@@ -72,7 +71,7 @@ public class StudentController {
     }
 
     @GetMapping(path = "filterByAge")
-    public ResponseEntity<?> filterByAge(@RequestParam int age) {
+    public ResponseEntity<?> filterByAge(@RequestParam Integer age) {
         try {
             return ResponseEntity.ok(
                     service.filterByAge(age)
@@ -95,8 +94,8 @@ public class StudentController {
 
     @GetMapping(path = "findByAgeBetween")
     public ResponseEntity<?> findByAgeBetween(
-            @RequestParam int min,
-            @RequestParam int max
+            @RequestParam Integer min,
+            @RequestParam Integer max
     ) {
         try {
             return ResponseEntity.ok(

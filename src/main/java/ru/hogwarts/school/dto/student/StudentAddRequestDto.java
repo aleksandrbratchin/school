@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public record StudentAddRequestDto (
         String name,
-        int age,
+        Integer age,
         UUID facultyId
 ){}

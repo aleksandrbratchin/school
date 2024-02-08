@@ -18,13 +18,11 @@ public interface StudentService extends CRUDService<UUID, Student> {
 
     List<StudentResponseDto> findAllDto();
 
-    List<StudentResponseDto> filterByAge(int age);
-
-    FacultyResponseDto filterByAge(UUID id);
+    List<StudentResponseDto> filterByAge(Integer age);
 
     FacultyResponseDto getFacultyById(UUID id);
 
-    List<StudentResponseDto> findByAgeBetween(int min, int max);
+    List<StudentResponseDto> findByAgeBetween(Integer min, Integer max);
 
     Double getAverageAge();
 
