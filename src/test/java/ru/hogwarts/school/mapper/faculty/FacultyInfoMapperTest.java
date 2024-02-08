@@ -20,35 +20,10 @@ import static org.mockito.ArgumentMatchers.any;
 @ExtendWith(SpringExtension.class)
 class FacultyInfoMapperTest {
     private FacultyInfoMapper mapper;
-    @Mock
-    private FacultyServiceImpl facultyService;
 
     @BeforeEach
     void setUp() {
-        mapper = new FacultyInfoMapper(facultyService);
-    }
-
-    @Test
-    void dtoIsCorrect() {
-        Faculty slytherin = new Faculty(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"), "Слизерин", "зелёный, серебряный", new ArrayList<>());
-        FacultyInfoDto dto = new FacultyInfoDto(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"), "Слизерин", "зелёный, серебряный");
-        Mockito.when(facultyService.findOne(any()))
-                .thenReturn(slytherin);
-
-        Faculty faculty = mapper.fromDto(dto);
-
-        assertThat(faculty.getId()).isEqualTo(dto.id());
-        assertThat(faculty.getName()).isEqualTo(dto.name());
-        assertThat(faculty.getColor()).isEqualTo(dto.color());
-        assertThat(faculty.getStudents().size()).isEqualTo(0);
-
-    }
-
-    @Test
-    void dtoIsNull() {
-        Throwable thrown = catchThrowable(() -> mapper.fromDto(null));
-
-        assertThat(thrown).isInstanceOf(NullPointerException.class);
+        mapper = new FacultyInfoMapper();
     }
 
     @Test

@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.dto.avatar.AvatarDto;
-import ru.hogwarts.school.mapper.ResponseMapper;
-import ru.hogwarts.school.mapper.avatar.AvatarMapper;
 import ru.hogwarts.school.model.avatar.Avatar;
 import ru.hogwarts.school.services.impl.AvatarService;
 
@@ -22,11 +20,9 @@ import java.util.UUID;
 public class AvatarController {
 
     private final AvatarService avatarService;
-    private final ResponseMapper<Avatar, AvatarDto> avatarMapper;
 
-    public AvatarController(@Qualifier("avatarService") AvatarService avatarService, AvatarMapper avatarMapper) {
+    public AvatarController(@Qualifier("avatarService") AvatarService avatarService) {
         this.avatarService = avatarService;
-        this.avatarMapper = avatarMapper;
     }
 
     @PostMapping(value = "/{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -80,11 +76,9 @@ public class AvatarController {
             @RequestParam("size") Integer pageSize
     ) {
         try {
-            List<Avatar> avatars = avatarService.findAll(pageNumber, pageSize);
+            List<AvatarDto> avatars = avatarService.findAll(pageNumber, pageSize);
             return ResponseEntity.ok(
-                    avatars.stream()
-                            .map(avatarMapper::toDto)
-                            .toList()
+                    avatars
             );
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

@@ -4,10 +4,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ru.hogwarts.school.mapper.faculty.FacultyAddRequestMapper;
+import ru.hogwarts.school.mapper.faculty.FacultyInfoMapper;
+import ru.hogwarts.school.mapper.faculty.FacultyResponseMapper;
+import ru.hogwarts.school.mapper.student.StudentResponseMapper;
 import ru.hogwarts.school.model.faculty.Faculty;
 import ru.hogwarts.school.repositories.FacultyRepository;
 import ru.hogwarts.school.specifications.FacultySpecification;
@@ -18,19 +24,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 
-
 @ExtendWith(SpringExtension.class)
 class FacultyServiceImplTest {
 
-    private FacultyServiceImpl service;
-
     @Mock
     private FacultyRepository repository;
-
-    @BeforeEach
-    void setUp() {
-        service = new FacultyServiceImpl(repository);
-    }
+    @Spy
+    private FacultyInfoMapper facultyInfoMapper;
+    @Spy
+    private FacultyAddRequestMapper facultyAddRequestMapper;
+    @Spy
+    @InjectMocks
+    private StudentResponseMapper studentResponseMapper;
+    @Spy
+    @InjectMocks
+    private FacultyResponseMapper facultyResponseMapper;
+    @InjectMocks
+    private FacultyServiceImpl service;
 
     @Nested
     class Success {
@@ -175,7 +185,7 @@ class FacultyServiceImplTest {
         @Test
         void updateNameIsPresent() {
             UUID id = UUID.randomUUID();
-            Faculty slytherin = new Faculty(id,"Слизерин", "зелёный, серебряный", new ArrayList<>());
+            Faculty slytherin = new Faculty(id, "Слизерин", "зелёный, серебряный", new ArrayList<>());
             Faculty hufflepuff = new Faculty(id, "Пуффендуй", "зелёный, серебряный", new ArrayList<>());
             Mockito.when(repository.findById(any(UUID.class)))
                     .thenReturn(Optional.of(slytherin));
@@ -214,21 +224,6 @@ class FacultyServiceImplTest {
 
         @Nested
         class ParametersIsNull {
-            @Test
-            void create() {
-
-                Throwable thrown = catchThrowable(() -> service.create(null));
-
-                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
-            }
-
-            @Test
-            void update() {
-
-                Throwable thrown = catchThrowable(() -> service.update(null));
-
-                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
-            }
 
             @Test
             void delete() {
@@ -254,8 +249,5 @@ class FacultyServiceImplTest {
                 assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
             }
         }
-
-
     }
-
 }

@@ -5,6 +5,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.hogwarts.school.dto.avatar.AvatarDto;
+import ru.hogwarts.school.mapper.ResponseMapper;
+import ru.hogwarts.school.mapper.avatar.AvatarMapper;
 import ru.hogwarts.school.model.avatar.Avatar;
 import ru.hogwarts.school.model.student.Student;
 import ru.hogwarts.school.repositories.AvatarRepository;
@@ -27,11 +30,18 @@ public class AvatarService {
     private final StudentRepository studentRepository;
     private final AvatarRepository avatarRepository;
     private final StorageService fileSystemStorageService;
+    private final ResponseMapper<Avatar, AvatarDto> avatarMapper;
 
-    public AvatarService(StudentRepository studentRepository, AvatarRepository avatarRepository, FileSystemStorageService fileSystemStorageService) {
+    public AvatarService(
+            StudentRepository studentRepository,
+            AvatarRepository avatarRepository,
+            FileSystemStorageService fileSystemStorageService,
+            AvatarMapper avatarMapper
+    ) {
         this.studentRepository = studentRepository;
         this.avatarRepository = avatarRepository;
         this.fileSystemStorageService = fileSystemStorageService;
+        this.avatarMapper = avatarMapper;
     }
 
     public void uploadAvatar(UUID studentId, MultipartFile avatarFile) throws IOException {
@@ -72,8 +82,10 @@ public class AvatarService {
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    public List<Avatar> findAll(Integer pageNumber, Integer pageSize) {
+    public List<AvatarDto> findAll(Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
-        return avatarRepository.findAll(pageRequest).getContent();
+        return avatarRepository.findAll(pageRequest).getContent().stream()
+                .map(avatarMapper::toDto)
+                .toList();
     }
 }

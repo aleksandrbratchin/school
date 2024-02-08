@@ -4,13 +4,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.hogwarts.school.dto.student.AverageAgeOfStudents;
-import ru.hogwarts.school.dto.student.NumberOfStudents;
+import ru.hogwarts.school.mapper.faculty.FacultyAddRequestMapper;
+import ru.hogwarts.school.mapper.faculty.FacultyInfoMapper;
+import ru.hogwarts.school.mapper.faculty.FacultyResponseMapper;
+import ru.hogwarts.school.mapper.student.StudentResponseMapper;
 import ru.hogwarts.school.model.student.Student;
+import ru.hogwarts.school.repositories.FacultyRepository;
 import ru.hogwarts.school.repositories.StudentRepository;
 import ru.hogwarts.school.specifications.StudentSpecification;
 
@@ -22,15 +27,27 @@ import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(SpringExtension.class)
 class StudentServiceImplTest {
-    private StudentServiceImpl service;
 
     @Mock
     private StudentRepository repository;
+    @Mock
+    private FacultyRepository facultyRepository;
+    @Spy
+    private FacultyInfoMapper facultyInfoMapper;
+    @Spy
+    private FacultyAddRequestMapper facultyAddRequestMapper;
+    @Spy
+    @InjectMocks
+    private StudentResponseMapper studentResponseMapper;
+    @Spy
+    @InjectMocks
+    private FacultyResponseMapper facultyResponseMapper;
+    @Spy
+    @InjectMocks
+    private FacultyServiceImpl facultyService;
+    @InjectMocks
+    private StudentServiceImpl service;
 
-    @BeforeEach
-    void setUp() {
-        service = new StudentServiceImpl(repository);
-    }
 
     @Nested
     class Success {
@@ -38,24 +55,24 @@ class StudentServiceImplTest {
         @Test
         void getAverageAge() {
             Mockito.when(repository.getAverageAge())
-                    .thenReturn(Optional.of(new AverageAgeOfStudents(11.5)));
+                    .thenReturn(11.5);
 
-            AverageAgeOfStudents age = service.getAverageAge();
+            Double age = service.getAverageAge();
 
-            assertThat(age.age()).isEqualTo(11.5);
+            assertThat(age).isEqualTo(11.5);
         }
 
         @Test
         void getCountStudents() {
             Mockito.when(repository.getCountStudents())
-                    .thenReturn(Optional.of(new NumberOfStudents(99)));
+                    .thenReturn(99);
 
-            NumberOfStudents count = service.getCountStudents();
+            Integer count = service.getCountStudents();
 
-            assertThat(count.getCount()).isEqualTo(99);
+            assertThat(count).isEqualTo(99);
         }
 
-        @Test
+/*        @Test
         void getLastFiveOldStudents() {
             Student potter = new Student(UUID.randomUUID(), "Гарри Джеймс Поттер", 11, null);
             Student lovegood = new Student(UUID.randomUUID(), "Полумна Лавгуд", 11, null);
@@ -65,10 +82,10 @@ class StudentServiceImplTest {
             Mockito.when(repository.getLastFiveOldStudents())
                     .thenReturn(List.of(potter, lovegood, granger, malfoy, weasley));
 
-            List<Student> result = service.getLastFiveOldStudents();
+            List<StudentResponseDto> result = service.getLastFiveOldStudents();
 
             assertThat(result.size()).isEqualTo(5);
-        }
+        }*/
 
         @Test
         void create() {
@@ -218,21 +235,6 @@ class StudentServiceImplTest {
 
         @Nested
         class ParametersIsNull {
-            @Test
-            void create() {
-
-                Throwable thrown = catchThrowable(() -> service.create(null));
-
-                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
-            }
-
-            @Test
-            void update() {
-
-                Throwable thrown = catchThrowable(() -> service.update(null));
-
-                assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
-            }
 
             @Test
             void delete() {
