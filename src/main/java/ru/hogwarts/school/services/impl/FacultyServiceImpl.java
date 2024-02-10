@@ -1,5 +1,7 @@
 package ru.hogwarts.school.services.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,7 @@ public class FacultyServiceImpl implements FacultyService {
     private final RequestMapper<Faculty, FacultyAddRequestDto> facultyAddRequestMapper;
     private final ResponseMapper<Faculty, FacultyResponseDto> facultyResponseMapper;
     private final ResponseMapper<Student, StudentResponseDto> studentResponseMapper;
+    private Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
 
     public FacultyServiceImpl(
             FacultyRepository facultyRepository,
@@ -47,17 +50,33 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public FacultyInfoDto create(FacultyAddRequestDto facultyDto) {
-        Optional.ofNullable(facultyDto).orElseThrow(IllegalArgumentException::new);
+        logger.info("Был вызван метод сохранения факультета из dto");
+        Optional.ofNullable(facultyDto).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе сохранения факультета из dto. facultyDto = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
         Faculty faculty = facultyAddRequestMapper.fromDto(facultyDto);
         return facultyInfoMapper.toDto(create(faculty));
     }
 
     @Override
     public Faculty create(Faculty faculty) {
-        Optional.ofNullable(faculty).orElseThrow(IllegalArgumentException::new);
+        logger.info("Был вызван метод сохранения факультета");
+        Optional.ofNullable(faculty).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе сохранения факультета. faculty = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
         String name = faculty.getName();
         if (repository.exists(FacultySpecification.nameEqual(name))) {
-            throw new IllegalArgumentException("Факультет '" + name + "' уже добавлен!");
+            String msq = "Факультет '" + name + "' уже добавлен!";
+            logger.error(msq);
+            throw new IllegalArgumentException(msq);
         }
         faculty.setId(null);
         return repository.save(faculty);
@@ -65,20 +84,30 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty update(Faculty faculty) {
-        Optional.ofNullable(faculty).orElseThrow(IllegalArgumentException::new);
+        logger.info("Был вызван метод изменения факультета");
+        Optional.ofNullable(faculty).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе изменения факультета. faculty = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
         UUID id = faculty.getId();
         Faculty old = repository.findById(faculty.getId())
                 .orElseThrow(
-                        () -> new NoSuchElementException(
-                                "Ошибка при попытке изменения факультета! " +
-                                        "Факультет с id = '" + id + "' не найден.")
+                        () -> {
+                            String msq = "Ошибка при попытке изменения факультета! " +
+                                    "Факультет с id = '" + id + "' не найден.";
+                            logger.error(msq);
+                            return new NoSuchElementException(msq);
+                        }
                 );
         if (!old.getName().equals(faculty.getName()) &&
                 repository.exists(FacultySpecification.nameEqual(faculty.getName()))) {
-            throw new IllegalArgumentException(
-                    "Ошибка при попытке изменения факультета! " +
-                            "Факультет с именем = '" + faculty.getName() + "' уже добавлен."
-            );
+            String msq = "Ошибка при попытке изменения факультета! " +
+                    "Факультет с именем = '" + faculty.getName() + "' уже добавлен.";
+            logger.error(msq);
+            throw new IllegalArgumentException(msq);
         }
         faculty = repository.save(faculty);
         return faculty;
@@ -86,7 +115,14 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public FacultyInfoDto update(FacultyInfoDto facultyDto) {
-        Optional.ofNullable(facultyDto).orElseThrow(IllegalArgumentException::new);
+        logger.info("Был вызван метод изменения факультета из dto");
+        Optional.ofNullable(facultyDto).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе изменения факультета из dto. facultyDto = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
         Faculty faculty = findOne(FacultySpecification.idEqual(facultyDto.id()));
         faculty.setName(facultyDto.name());
         faculty.setColor(facultyDto.color());
@@ -95,12 +131,22 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty delete(UUID id) {
-        Optional.ofNullable(id).orElseThrow(IllegalArgumentException::new);
+        logger.info("Был вызван метод удаления факультета по id");
+        Optional.ofNullable(id).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе удаления факультета по id. id = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
         Faculty old = repository.findOne(FacultySpecification.idEqual(id))
-                .orElseThrow(() -> new NoSuchElementException(
-                                "Ошибка при попытке удаления факультета! " +
-                                        "Факультет с id = '" + id + "' не найден."
-                        )
+                .orElseThrow(
+                        () -> {
+                            String msq = "Ошибка при попытке удаления факультета! " +
+                                    "Факультет с id = '" + id + "' не найден.";
+                            logger.error(msq);
+                            return new NoSuchElementException(msq);
+                        }
                 );
         repository.deleteById(id);
         return old;
@@ -108,22 +154,39 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public FacultyInfoDto deleteById(UUID id) {
+        logger.info("Был вызван метод удаления факультета по id");
+        Optional.ofNullable(id).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе удаления факультета по id. id = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
         return facultyInfoMapper.toDto(delete(id));
     }
 
     @Override
     public List<Faculty> findAll(Specification<Faculty> specification) {
-        Optional.ofNullable(specification).orElseThrow(IllegalArgumentException::new);
+        logger.info("Был вызван метод фильтрации факультетов по спецификации");
+        Optional.ofNullable(specification).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе фильтрации факультетов по спецификации. specification = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
         return repository.findAll(specification);
     }
 
     @Override
     public List<Faculty> findAll() {
+        logger.info("Был вызван метод получения всех факультетов");
         return repository.findAll();
     }
 
     @Override
     public List<FacultyResponseDto> findAllDto() {
+        logger.info("Был вызван метод получения всех факультетов");
         return repository.findAll().stream()
                 .map(facultyResponseMapper::toDto)
                 .toList();
@@ -131,6 +194,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public List<FacultyResponseDto> filterByColor(String color) {
+        logger.info("Был вызван метод фильтрации факультетов по цвету");
         return repository.findAll(FacultySpecification.colorLike(color))
                 .stream()
                 .map(facultyResponseMapper::toDto)
@@ -139,6 +203,14 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public List<StudentResponseDto> getStudentsById(UUID id) {
+        logger.info("Был вызван метод получения студентов по id факультета");
+        Optional.ofNullable(id).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе получения студентов по id факультета. id = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
         return findOne(FacultySpecification.idEqual(id)).getStudents()
                 .stream()
                 .map(studentResponseMapper::toDto)
@@ -147,6 +219,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public List<FacultyResponseDto> findByNameOrColor(String name, String color) {
+        logger.info("Был вызван метод поиска факультета по имени и цвету");
         return findAll(FacultySpecification.findByNameOrColor(name, color))
                 .stream()
                 .map(facultyResponseMapper::toDto)
@@ -155,8 +228,21 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty findOne(Specification<Faculty> specification) {
-        Optional.ofNullable(specification).orElseThrow(IllegalArgumentException::new);
-        return repository.findOne(specification).orElseThrow(NoSuchElementException::new);
+        logger.info("Был вызван метод поиска факультета по спецификации");
+        Optional.ofNullable(specification).orElseThrow(
+                () -> {
+                    String msq = "Ошибка в методе поиска факультета по спецификации. specification = null";
+                    logger.error(msq);
+                    return new IllegalArgumentException(msq);
+                }
+        );
+        return repository.findOne(specification).orElseThrow(
+                () -> {
+                    String msq = "При поиске факультета по спецификации произошла ошибка";
+                    logger.error(msq);
+                    return new NoSuchElementException(msq);
+                }
+        );
     }
 
 }
