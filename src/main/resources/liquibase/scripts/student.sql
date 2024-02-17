@@ -16,6 +16,7 @@ ALTER TABLE student ADD CONSTRAINT student_min_age CHECK (age >= 11);
 ALTER TABLE student ADD CONSTRAINT student_name_is_not_empty CHECK (name != '');
 ALTER TABLE student ADD CONSTRAINT student_unique_name UNIQUE (name);
 ALTER TABLE student ALTER COLUMN name SET NOT NULL;
+ALTER TABLE student ALTER COLUMN age SET NOT NULL;
 ALTER TABLE student ALTER COLUMN age SET DEFAULT 11;
 
 -- changeset aleksbratchin:student_index_name

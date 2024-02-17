@@ -29,4 +29,8 @@ public interface StudentService extends CRUDService<UUID, Student> {
     Integer getCountStudents();
 
     List<StudentResponseDto> getLastFiveOldStudents();
+
+    List<String> nameStartsWithLetterA();
+
+    Double getAverageAgeWithStream();
 }

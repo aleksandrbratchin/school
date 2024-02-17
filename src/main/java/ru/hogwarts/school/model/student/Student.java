@@ -1,7 +1,6 @@
 package ru.hogwarts.school.model.student;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
 import ru.hogwarts.school.model.faculty.Faculty;
 
 import java.util.UUID;
@@ -119,7 +118,7 @@ public class Student {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
-                ", faculty=" + faculty.getName() +
+                ", faculty=" + (faculty == null ? "" : faculty.getName()) +
                 '}';
     }
 }

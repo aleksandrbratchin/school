@@ -53,6 +53,51 @@ class StudentServiceImplTest {
     class Success {
 
         @Test
+        void nameStartsWithLetterA() {
+            Mockito.when(repository.findAll())
+                    .thenReturn(
+                            List.of(
+                                    new Student("Юра", 1, null),
+                                    new Student("Вася", 2, null),
+                                    new Student("Коля", 3, null),
+                                    new Student("Александр", 4, null),
+                                    new Student("Никита", 5, null),
+                                    new Student("Гена", 6, null),
+                                    new Student("Антон", 7, null),
+                                    new Student("Мирон", 8, null),
+                                    new Student("Андрей", 9, null),
+                                    new Student("Вадим", 10, null)
+                            )
+                    );
+
+            List<String> strings = service.nameStartsWithLetterA();
+
+            assertThat(strings.size()).isEqualTo(3);
+        }
+
+        @Test
+        void getAverageAgeWithStream() {
+            Mockito.when(repository.findAll())
+                    .thenReturn(
+                            List.of(
+                                    new Student(null, 1, null),
+                                    new Student(null, 2, null),
+                                    new Student(null, 3, null),
+                                    new Student(null, 4, null),
+                                    new Student(null, 5, null),
+                                    new Student(null, 6, null),
+                                    new Student(null, 7, null),
+                                    new Student(null, 8, null),
+                                    new Student(null, 9, null),
+                                    new Student(null, 10, null)
+                            )
+                    );
+
+            Double age = service.getAverageAgeWithStream();
+
+            assertThat(age).isEqualTo(5.5);
+        }
+        @Test
         void getAverageAge() {
             Mockito.when(repository.getAverageAge())
                     .thenReturn(11.5);
@@ -71,21 +116,6 @@ class StudentServiceImplTest {
 
             assertThat(count).isEqualTo(99);
         }
-
-/*        @Test
-        void getLastFiveOldStudents() {
-            Student potter = new Student(UUID.randomUUID(), "Гарри Джеймс Поттер", 11, null);
-            Student lovegood = new Student(UUID.randomUUID(), "Полумна Лавгуд", 11, null);
-            Student granger = new Student(UUID.randomUUID(), "Гермиона Джин Грейнджер", 11, null);
-            Student malfoy = new Student(UUID.randomUUID(), "Драко Люциус Малфой", 12, null);
-            Student weasley = new Student(UUID.randomUUID(), "Рональд Билиус Уизли", 11, null);
-            Mockito.when(repository.getLastFiveOldStudents())
-                    .thenReturn(List.of(potter, lovegood, granger, malfoy, weasley));
-
-            List<StudentResponseDto> result = service.getLastFiveOldStudents();
-
-            assertThat(result.size()).isEqualTo(5);
-        }*/
 
         @Test
         void create() {
@@ -144,6 +174,7 @@ class StudentServiceImplTest {
             void delete() {
                 Mockito.when(repository.findOne(any(Specification.class)))
                         .thenReturn(Optional.of(malfoy));
+                Mockito.doNothing().when(repository).deleteById(any(UUID.class));
 
                 Student deleted = service.delete(malfoy.getId());
 
