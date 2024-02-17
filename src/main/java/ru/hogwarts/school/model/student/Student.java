@@ -1,6 +1,7 @@
 package ru.hogwarts.school.model.student;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 import ru.hogwarts.school.model.faculty.Faculty;
 
 import java.util.UUID;
@@ -12,6 +13,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
+
     private Integer age;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -109,5 +111,15 @@ public class Student {
         public Student build() {
             return new Student(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", faculty=" + faculty.getName() +
+                '}';
     }
 }

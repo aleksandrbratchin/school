@@ -7,6 +7,7 @@ import ru.hogwarts.school.model.student.Student;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 public class Faculty {
@@ -115,5 +116,15 @@ public class Faculty {
         public Faculty build() {
             return new Faculty(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Faculty{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", color='" + color + '\'' +
+                ", students=" + students +
+                '}';
     }
 }
