@@ -4,12 +4,14 @@ springdoc:
   swagger-ui:
     path: swagger
 spring:
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   datasource:
-    url: jdbc:postgresql://94.158.219.127:5433/hogwarts
+    url: jdbc:postgresql://localhost:5432/hogwartslb
     username: student
     password: chocolatefrog
 path:
