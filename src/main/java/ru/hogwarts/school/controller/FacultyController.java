@@ -107,4 +107,15 @@ public class FacultyController {
         }
     }
 
+    @GetMapping(path = "longestFacultyName")
+    public ResponseEntity<?> longestFacultyName() {
+        try {
+            return ResponseEntity.ok(
+                    service.longestFacultyName()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

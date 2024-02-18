@@ -18,10 +18,7 @@ import ru.hogwarts.school.services.api.StudentService;
 import ru.hogwarts.school.specifications.FacultySpecification;
 import ru.hogwarts.school.specifications.StudentSpecification;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -264,5 +261,26 @@ public class StudentServiceImpl implements StudentService {
         return repository.getLastFiveOldStudents().stream()
                 .map(studentResponseMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<String> nameStartsWithLetterA() {
+        List<Student> faculties = findAll();
+        return faculties.stream()
+                .parallel()
+                .map(student -> student.getName().toUpperCase())
+                .filter(field -> field.startsWith("А"))
+                .sorted()
+                .toList();
+    }
+
+    @Override
+    public Double getAverageAgeWithStream() {
+        List<Student> faculties = findAll();
+        return faculties.stream()
+                .parallel()
+                .mapToDouble(Student::getAge)
+                .average()
+                .orElse(Double.NaN);
     }
 }

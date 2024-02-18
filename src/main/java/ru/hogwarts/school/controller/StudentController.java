@@ -139,4 +139,26 @@ public class StudentController {
         }
     }
 
+    @GetMapping(path = "nameStartsWithLetterA")
+    public ResponseEntity<?> nameStartsWithLetterA() {
+        try {
+            return ResponseEntity.ok(
+                    service.nameStartsWithLetterA()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping(path = "getAverageAgeWithStream")
+    public ResponseEntity<?> getAverageAgeWithStream() {
+        try {
+            return ResponseEntity.ok(
+                    service.getAverageAgeWithStream()
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

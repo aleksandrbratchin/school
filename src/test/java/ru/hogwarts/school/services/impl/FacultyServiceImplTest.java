@@ -134,6 +134,21 @@ class FacultyServiceImplTest {
             }
 
             @Test
+            void longestFacultyName() {
+                Faculty gryffindor = new Faculty(UUID.randomUUID(), "Гриффиндор", "алый, золотой", new ArrayList<>());
+                ravenclaw = new Faculty(UUID.randomUUID(), "Когтевран", "синий, бронзовый", new ArrayList<>());
+                Faculty hufflepuff = new Faculty(UUID.randomUUID(), "Пуффендуй", "канареечно-жёлтый, чёрный", new ArrayList<>());
+                Faculty gryffindok = new Faculty(UUID.randomUUID(), "Гриффиндок", "", new ArrayList<>());
+                faculties = Arrays.asList(gryffindor, ravenclaw, hufflepuff, gryffindok);
+                Mockito.when(repository.findAll())
+                        .thenReturn(faculties);
+
+                String results = service.longestFacultyName();
+
+                assertThat(results).isEqualTo("Гриффиндор");
+            }
+
+            @Test
             void findAllSpecification() {
                 Mockito.when(repository.findAll(any(Specification.class)))
                         .thenReturn(faculties);

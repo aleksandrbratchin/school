@@ -9,7 +9,6 @@ import ru.hogwarts.school.dto.faculty.FacultyAddRequestDto;
 import ru.hogwarts.school.dto.faculty.FacultyInfoDto;
 import ru.hogwarts.school.dto.faculty.FacultyResponseDto;
 import ru.hogwarts.school.dto.student.StudentResponseDto;
-import ru.hogwarts.school.mapper.Mapper;
 import ru.hogwarts.school.mapper.RequestMapper;
 import ru.hogwarts.school.mapper.ResponseMapper;
 import ru.hogwarts.school.model.faculty.Faculty;
@@ -18,10 +17,7 @@ import ru.hogwarts.school.repositories.FacultyRepository;
 import ru.hogwarts.school.services.api.FacultyService;
 import ru.hogwarts.school.specifications.FacultySpecification;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
@@ -224,6 +220,17 @@ public class FacultyServiceImpl implements FacultyService {
                 .stream()
                 .map(facultyResponseMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public String longestFacultyName() {
+        logger.info("Был вызван метод поиска самого длинного названия факультета");
+        List<Faculty> faculties = findAll();
+        return faculties.stream()
+                .parallel()
+                .map(Faculty::getName)
+                .max(Comparator.comparing(String::length))
+                .orElse("");
     }
 
     @Override

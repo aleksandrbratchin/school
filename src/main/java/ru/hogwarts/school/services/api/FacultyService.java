@@ -24,4 +24,6 @@ public interface FacultyService extends CRUDService<UUID, Faculty> {
     List<StudentResponseDto> getStudentsById(UUID id);
 
     List<FacultyResponseDto> findByNameOrColor(String name, String color);
+
+    String longestFacultyName();
 }

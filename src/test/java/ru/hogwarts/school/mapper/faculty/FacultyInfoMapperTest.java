@@ -3,19 +3,17 @@ package ru.hogwarts.school.mapper.faculty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.hogwarts.school.dto.faculty.FacultyInfoDto;
 import ru.hogwarts.school.model.faculty.Faculty;
-import ru.hogwarts.school.services.impl.FacultyServiceImpl;
+
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(SpringExtension.class)
 class FacultyInfoMapperTest {

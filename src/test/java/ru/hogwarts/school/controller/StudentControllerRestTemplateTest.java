@@ -239,6 +239,62 @@ class StudentControllerRestTemplateTest {
     }
 
     @Test
+    void getAverageAgeWithStream() {
+        Mockito.when(repository.findAll())
+                .thenReturn(
+                        List.of(
+                                new Student("Юра", 1, null),
+                                new Student("Вася", 2, null),
+                                new Student("Коля", 3, null),
+                                new Student("Александр", 4, null),
+                                new Student("Никита", 5, null),
+                                new Student("Гена", 6, null),
+                                new Student("Антон", 7, null),
+                                new Student("Мирон", 8, null),
+                                new Student("Андрей", 9, null),
+                                new Student("Вадим", 10, null)
+                        )
+                );
+
+        ResponseEntity<Double> response = restTemplate.exchange(
+                "/student/getAverageAgeWithStream",
+                HttpMethod.GET,
+                null,
+                Double.class
+        );
+
+        assertThat(response.getBody()).isEqualTo(5.5);
+    }
+
+    @Test
+    void nameStartsWithLetterA() {
+        Mockito.when(repository.findAll())
+                .thenReturn(
+                        List.of(
+                                new Student("Юра", 1, null),
+                                new Student("Вася", 2, null),
+                                new Student("Коля", 3, null),
+                                new Student("Александр", 4, null),
+                                new Student("Никита", 5, null),
+                                new Student("Гена", 6, null),
+                                new Student("Антон", 7, null),
+                                new Student("Мирон", 8, null),
+                                new Student("Андрей", 9, null),
+                                new Student("Вадим", 10, null)
+                        )
+                );
+
+        ResponseEntity<List<String>> response = restTemplate.exchange(
+                "/student/nameStartsWithLetterA",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        assertThat(response.getBody().size()).isEqualTo(3);
+    }
+
+    @Test
     void getCountStudents() {
         Mockito.when(repository.getCountStudents())
                 .thenReturn(99);
