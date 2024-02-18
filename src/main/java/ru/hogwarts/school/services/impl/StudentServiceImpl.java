@@ -2,6 +2,7 @@ package ru.hogwarts.school.services.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,10 @@ import ru.hogwarts.school.services.api.StudentService;
 import ru.hogwarts.school.specifications.FacultySpecification;
 import ru.hogwarts.school.specifications.StudentSpecification;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -172,6 +176,13 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentResponseDto> findAllDto() {
         logger.info("Был вызван метод получения всех студентов");
         return repository.findAll().stream()
+                .map(studentResponseMapper::toDto)
+                .toList();
+    }
+    @Override
+    public List<StudentResponseDto> findAllDto(PageRequest pageRequest) {
+        logger.info("Был вызван метод получения всех студентов постранично");
+        return repository.findAll(pageRequest).stream()
                 .map(studentResponseMapper::toDto)
                 .toList();
     }
