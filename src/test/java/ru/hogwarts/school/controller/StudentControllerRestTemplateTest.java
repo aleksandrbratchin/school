@@ -10,6 +10,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.*;
 import ru.hogwarts.school.dto.faculty.FacultyResponseDto;
@@ -288,7 +290,8 @@ class StudentControllerRestTemplateTest {
                 "/student/nameStartsWithLetterA",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<>() {}
+                new ParameterizedTypeReference<>() {
+                }
         );
 
         assertThat(response.getBody().size()).isEqualTo(3);
@@ -329,6 +332,52 @@ class StudentControllerRestTemplateTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().size()).isEqualTo(5);
+    }
+
+    @Test
+    void printParallel() {
+        Student potter = new Student(UUID.randomUUID(), "Студент0", 11, null);
+        Student lovegood = new Student(UUID.randomUUID(), "Студент1", 11, null);
+        Student granger = new Student(UUID.randomUUID(), "Студент2", 11, null);
+        Student malfoy = new Student(UUID.randomUUID(), "Студент3", 12, null);
+        Student weasley = new Student(UUID.randomUUID(), "Студент4", 11, null);
+        Student diggory = new Student(UUID.randomUUID(), "Студент5", 13, null);
+        Mockito.when(repository.findAll(any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(List.of(potter, lovegood, granger, malfoy, weasley, diggory)));
+
+        ResponseEntity<List<StudentResponseDto>> response = restTemplate.exchange(
+                "/student/print-parallel",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(6);
+    }
+
+    @Test
+    void printSynchronized() {
+        Student potter = new Student(UUID.randomUUID(), "Студент0", 11, null);
+        Student lovegood = new Student(UUID.randomUUID(), "Студент1", 11, null);
+        Student granger = new Student(UUID.randomUUID(), "Студент2", 11, null);
+        Student malfoy = new Student(UUID.randomUUID(), "Студент3", 12, null);
+        Student weasley = new Student(UUID.randomUUID(), "Студент4", 11, null);
+        Student diggory = new Student(UUID.randomUUID(), "Студент5", 13, null);
+        Mockito.when(repository.findAll(any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(List.of(potter, lovegood, granger, malfoy, weasley, diggory)));
+
+        ResponseEntity<List<StudentResponseDto>> response = restTemplate.exchange(
+                "/student/print-synchronized",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(6);
     }
 
 

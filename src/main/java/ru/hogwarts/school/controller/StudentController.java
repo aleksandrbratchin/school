@@ -1,14 +1,21 @@
 package ru.hogwarts.school.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.dto.student.StudentAddRequestDto;
+import ru.hogwarts.school.dto.student.StudentResponseDto;
 import ru.hogwarts.school.dto.student.StudentUpdateRequestDto;
+import ru.hogwarts.school.model.student.Student;
 import ru.hogwarts.school.services.api.StudentService;
 import ru.hogwarts.school.services.impl.StudentServiceImpl;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @RestController
 @RequestMapping("student")
@@ -159,6 +166,73 @@ public class StudentController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping(path = "print-parallel")
+    public ResponseEntity<?> printParallel() {
+        try {
+            PageRequest pageRequest = PageRequest.of(0, 6);
+            List<StudentResponseDto> sixStudent = service.findAllDto(pageRequest);
+            printStudent(sixStudent.get(0));
+            printStudent(sixStudent.get(1));
+            Thread thread1 = new Thread(
+                    () -> {
+                        printStudent(sixStudent.get(2));
+                        printStudent(sixStudent.get(3));
+                    }
+            );
+            Thread thread2 = new Thread(
+                    () -> {
+                        printStudent(sixStudent.get(4));
+                        printStudent(sixStudent.get(5));
+                    }
+            );
+            thread1.start();
+            thread2.start();
+            thread1.join();
+            thread2.join();
+            return ResponseEntity.ok(sixStudent);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    private void printStudent(StudentResponseDto student) {
+        System.out.println(Thread.currentThread().getName() + ": " + student);
+    }
+
+    @GetMapping(path = "print-synchronized")
+    public ResponseEntity<?> printSynchronized() {
+        try {
+            PageRequest pageRequest = PageRequest.of(0, 6);
+            List<StudentResponseDto> sixStudent = service.findAllDto(pageRequest);
+            BlockingQueue<StudentResponseDto> studentQueue = new LinkedBlockingQueue<>(sixStudent);
+            printStudentSynchronized(studentQueue);
+            printStudentSynchronized(studentQueue);
+            Thread thread1 = new Thread(
+                    () -> {
+                        printStudentSynchronized(studentQueue);
+                        printStudentSynchronized(studentQueue);
+                    }
+            );
+            Thread thread2 = new Thread(
+                    () -> {
+                        printStudentSynchronized(studentQueue);
+                        printStudentSynchronized(studentQueue);
+                    }
+            );
+            thread1.start();
+            thread2.start();
+            thread1.join();
+            thread2.join();
+            return ResponseEntity.ok(sixStudent);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    private synchronized void printStudentSynchronized(BlockingQueue<StudentResponseDto> studentQueue) {
+        System.out.println(Thread.currentThread().getName() + ": " + studentQueue.poll());
     }
 
 }
