@@ -1,5 +1,6 @@
 package ru.hogwarts.school.services.api;
 
+import org.springframework.data.domain.PageRequest;
 import ru.hogwarts.school.dto.faculty.FacultyResponseDto;
 import ru.hogwarts.school.dto.student.StudentAddRequestDto;
 import ru.hogwarts.school.dto.student.StudentResponseDto;
@@ -17,6 +18,8 @@ public interface StudentService extends CRUDService<UUID, Student> {
     StudentResponseDto deleteById(UUID id);
 
     List<StudentResponseDto> findAllDto();
+
+    List<StudentResponseDto> findAllDto(PageRequest pageRequest);
 
     List<StudentResponseDto> filterByAge(Integer age);
 
